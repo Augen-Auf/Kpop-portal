@@ -4,9 +4,11 @@ import {Context} from "../index";
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
+import {LOGIN_ROUTE} from "../utils/consts";
 
 const navigation = ['НОВОСТИ', 'СТАТЬИ', 'ТРЕНДЫ', 'МУЗЫКА', 'АНАЛИЗ'];
 const profile = ['Мой профиль', 'Настройки', 'Выйти'];
+const unauth_profile = [{title:'Войти', link: LOGIN_ROUTE}, {title:'Зарегистрироваться', link: LOGIN_ROUTE}];
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -20,7 +22,7 @@ const NavBar = () => {
                 {({ open }) => (
                     <>
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                            <div className="flex items-center h-16">
+                            <div className="flex items-center h-full">
 
                                 <div className="flex-shrink-0 w-2/12">
                                     <img
@@ -85,21 +87,39 @@ const NavBar = () => {
                                                             static
                                                             className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
                                                         >
-                                                            {profile.map((item) => (
-                                                                <Menu.Item key={item}>
-                                                                    {({ active }) => (
-                                                                        <a
-                                                                            href="#"
-                                                                            className={classNames(
-                                                                                active ? 'bg-gray-100' : '',
-                                                                                'block px-4 py-2 text-sm text-gray-700'
+                                                            {
+                                                                user.isAuth ?
+                                                                    profile.map((item, itIdx) => (
+                                                                        <Menu.Item key={'main_' + itIdx}>
+                                                                            {({ active }) => (
+                                                                                <a
+                                                                                    href="#"
+                                                                                    className={classNames(
+                                                                                        active ? 'bg-gray-100' : '',
+                                                                                        'block px-4 py-2 text-sm text-gray-700'
+                                                                                    )}
+                                                                                >
+                                                                                    {item}
+                                                                                </a>
                                                                             )}
-                                                                        >
-                                                                            {item}
-                                                                        </a>
-                                                                    )}
-                                                                </Menu.Item>
-                                                            ))}
+                                                                        </Menu.Item>
+                                                                    )) :
+                                                                    unauth_profile.map((item,itIdx) => (
+                                                                        <Menu.Item key={'main_' + itIdx}>
+                                                                            {({ active }) => (
+                                                                                <a
+                                                                                    href={item.link}
+                                                                                    className={classNames(
+                                                                                        active ? 'bg-gray-100' : '',
+                                                                                        'block px-4 py-2 text-sm text-gray-700'
+                                                                                    )}
+                                                                                >
+                                                                                    {item.title}
+                                                                                </a>
+                                                                            )}
+                                                                        </Menu.Item>
+                                                                    ))
+                                                            }
                                                         </Menu.Items>
                                                     </Transition>
                                                 </>
@@ -160,15 +180,26 @@ const NavBar = () => {
                                     </button>
                                 </div>
                                 <div className="mt-3 px-2 space-y-1">
-                                    {profile.map((item) => (
+                                    {user.isAuth ?
+                                        profile.map((item, itemIdx) => (
                                         <a
-                                            key={item}
+                                            key={'mobile_' + itemIdx}
                                             href="#"
                                             className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
                                         >
                                             {item}
                                         </a>
-                                    ))}
+                                        )) :
+                                        unauth_profile.map((item, itemIdx) => (
+                                            <a
+                                                key={'mobile_' + itemIdx}
+                                                href="#"
+                                                className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
+                                            >
+                                                {item}
+                                            </a>
+                                        ))
+                                    }
                                 </div>
                             </div>
                         </Disclosure.Panel>

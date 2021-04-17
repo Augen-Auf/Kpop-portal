@@ -71,7 +71,7 @@ const UserSubscriber = sequelize.define('userSubscriber', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 });
 
-Role.hasMany(User, {foreignKey: 'role_id'});
+Role.hasMany(User, {foreignKey: 'role_id', allowNull: true});
 User.hasMany(Comment, {foreignKey: 'user_id', onDelete: 'SET NULL'});
 User.hasMany(News, {foreignKey: 'author_id', onDelete: 'SET NULL'});
 User.hasMany(Viki, {foreignKey: 'author_id', onDelete: 'SET NULL'});
