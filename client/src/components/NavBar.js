@@ -4,18 +4,33 @@ import {Context} from "../index";
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
-import {LOGIN_ROUTE} from "../utils/consts";
+import {LOGIN_ROUTE, PROFILE_ROUTE, REGISTRATION_ROUTE} from "../utils/consts";
+import {observer} from "mobx-react-lite";
 
 const navigation = ['НОВОСТИ', 'СТАТЬИ', 'ТРЕНДЫ', 'МУЗЫКА', 'АНАЛИЗ'];
-const profile = ['Мой профиль', 'Настройки', 'Выйти'];
-const unauth_profile = [{title:'Войти', link: LOGIN_ROUTE}, {title:'Зарегистрироваться', link: LOGIN_ROUTE}];
+const unauth_profile = [{title:'Войти', link: LOGIN_ROUTE}, {title:'Зарегистрироваться', link: REGISTRATION_ROUTE}];
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
 }
 
-const NavBar = () => {
+const NavBar = observer(() => {
+
     const {user} = useContext(Context);
+
+    const logOut = () => {
+        user.setUser({})
+        user.setIsAuth(false)
+        localStorage.removeItem('token')
+    }
+
+    const profile = [
+        {title:'Мой профиль', link: PROFILE_ROUTE},
+        {title:'Выйти', func: () => logOut()}
+        ];
+
+
+
     return (
         <div>
             <Disclosure as="nav" className="bg-blue">
@@ -98,8 +113,9 @@ const NavBar = () => {
                                                                                         active ? 'bg-gray-100' : '',
                                                                                         'block px-4 py-2 text-sm text-gray-700'
                                                                                     )}
+                                                                                    onClick={item.func}
                                                                                 >
-                                                                                    {item}
+                                                                                    {item.title}
                                                                                 </a>
                                                                             )}
                                                                         </Menu.Item>
@@ -184,7 +200,7 @@ const NavBar = () => {
                                         profile.map((item, itemIdx) => (
                                         <a
                                             key={'mobile_' + itemIdx}
-                                            href="#"
+                                            href="/kpopworld"
                                             className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
                                         >
                                             {item}
@@ -214,6 +230,6 @@ const NavBar = () => {
             </header>
         </div>
     );
-};
+});
 
 export default NavBar;

@@ -2,6 +2,7 @@ const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {User} = require('../models/models');
+const { Op } = require("sequelize");
 
 const generateJwt = (id, email, name, role_id) => {
     return jwt.sign(
@@ -12,12 +13,12 @@ const generateJwt = (id, email, name, role_id) => {
 };
 
 class UserController {
-    async registration(req, res) {
+    async registration(req, res, next) {
         const {email, name, password, role_id} = req.body;
         if(!email || !name || !password) {
             return next(ApiError.badRequest('Некорректный email, name или password'))
         }
-        const candidate = await User.findOne({where: {email, name}});
+        const candidate = await User.findOne({ where: { [Op.or]: [{email}, {name}] }});
         if (candidate) {
             return next(ApiError.badRequest('Пользователь с таким email или name уже существует'))
         }
@@ -38,12 +39,12 @@ class UserController {
             return next(ApiError.internal('Пользователь с таким email не найден'))
         }
         const token = generateJwt(user.id, user.email, user.name, user.role_id);
-        return res.json(token);
+        return res.json({token});
     };
 
     async check(req, res, next) {
         const token = generateJwt(req.user.id, req.user.email, req.user.name, req.user.role_id)
-        return res.json(token);
+        return res.json({token});
     }
 }
 
