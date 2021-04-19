@@ -5,15 +5,9 @@ import {observer} from "mobx-react-lite";
 import * as yup from 'yup'
 
 
-import {LOGIN_ROUTE, PORTAL_ROUTE} from "../utils/consts";
+import {EMAIL_REGEX, LOGIN_ROUTE, PORTAL_ROUTE} from "../utils/consts";
 import {login, registration} from "../http/userAPI";
 import {Context} from "../index";
-
-const schema = yup.object().shape({
-    name: yup.string().required("Пожалуйста, введите имя"),
-    email: yup.string().required("Пожалуйста, введите email").email(),
-    password: yup.string().required("Пожалуйста, введите пароль").min(6)
-})
 
 const Auth = observer(() => {
 
@@ -23,11 +17,7 @@ const Auth = observer(() => {
     const location = useLocation()
     const history = useHistory()
     const isLogin = location.pathname === LOGIN_ROUTE
-    const {register, handleSubmit, errors} = useForm(
-        {
-            validationSchema: schema
-        }
-    )
+    const {register, handleSubmit, formState: { errors }} = useForm()
 
 
 
@@ -62,23 +52,31 @@ const Auth = observer(() => {
                     <form action="" className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
                         <div>
                             <label htmlFor="" className="text-black block">Email</label>
-                            <input className="w-full p-2 rounded-md" {...register('email')}/>
-                            <p>{errors.email.message}</p>
+                            <input className={`w-full p-2 rounded-md ${errors.email ? "border-2 border-red-500" : ""}`}
+                                   {...register('email', {
+                                       required: "Поле email не заполнено",
+                                       pattern: {value: EMAIL_REGEX, message:"В поле введен не email"}
+                                   })}/>
+                            {errors.email && <p className="text-red-500"> { errors.email.message } </p>}
                         </div>
                         {
                             !isLogin ?
                                 <div>
                                     <label htmlFor="" className="text-black block">Имя</label>
-                                    <input className="w-full p-2 rounded-md" type="text" {...register('name')}/>
-                                    <p>{errors.name.message}</p>
+                                    <input className={`w-full p-2 rounded-md ${errors.name ? "border-2 border-red-500" : ""}`}
+                                           type="text"
+                                           {...register('name', {required: "Поле имя не заполнено"})}/>
+                                    {errors.name && <p className="text-red-500"> { errors.name.message } </p>}
                                 </div>
                                 :
                                 null
                         }
                         <div>
                             <label htmlFor="" className="text-black block">Пароль</label>
-                            <input className="w-full p-2 rounded-md" type="password" {...register('password')}/>
-                            <p>{errors.password.message}</p>
+                            <input className={`w-full p-2 rounded-md ${errors.password ? "border-2 border-red-500" : ""}`}
+                                   type="password"
+                                   {...register('password', {required: "Поле пароль не заполнено"})}/>
+                            {errors.password && <p className="text-red-500"> { errors.password.message } </p>}
                         </div>
 
                         <button type="submit" className="w-full py-2 px-4 bg-yellow rounded-md text-black">
