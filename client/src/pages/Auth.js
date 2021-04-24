@@ -2,22 +2,22 @@ import React, {useContext, useState} from 'react';
 import { NavLink, useLocation, useHistory  } from "react-router-dom"
 import {useForm} from "react-hook-form";
 import {observer} from "mobx-react-lite";
-import * as yup from 'yup'
+// import * as yup from 'yup'
 
 
-import {EMAIL_REGEX, LOGIN_ROUTE, PORTAL_ROUTE} from "../utils/consts";
+import {EMAIL_REGEX, LOGIN_ROUTE, PORTAL_ROUTE, REGISTRATION_ROUTE} from "../utils/consts";
 import {login, registration} from "../http/userAPI";
 import {Context} from "../index";
 
 const Auth = observer(() => {
 
-    const { user } = useContext(Context)
-    const [authError, setAuthError] = useState()
+    const { user } = useContext(Context);
+    const [authError, setAuthError] = useState();
 
-    const location = useLocation()
-    const history = useHistory()
-    const isLogin = location.pathname === LOGIN_ROUTE
-    const {register, handleSubmit, formState: { errors }} = useForm()
+    const location = useLocation();
+    const history = useHistory();
+    const isLogin = location.pathname === LOGIN_ROUTE;
+    const {register, handleSubmit, formState: { errors }} = useForm();
 
 
 
@@ -30,22 +30,22 @@ const Auth = observer(() => {
                 user_data = await registration(data.email, data.password, data.name).catch(err => { throw err })
             }
 
-            console.log(user_data)
+            console.log(user_data);
 
             if(!authError) {
-                user.setUser(user_data)
-                user.setIsAuth(true)
+                user.setUser(user_data);
+                user.setIsAuth(true);
                 history.push(PORTAL_ROUTE)
             }
         }
         catch (e) {
             setAuthError(e.message);
         }
-    }
+    };
 
     return (
         <div
-            className="mx-auto h-5/6 items-center flex justify-center flex-col">
+            className="mx-auto h-5/6 items-center flex justify-center flex-col font-montserrat font-normal">
             <div className="max-w-md w-full mx-auto mt-4">
                 <div className="bg-pink p-8 rounded-md">
                 <h3 className="text-center text-2xl">{ isLogin ? 'Авторизация' : 'Регистрация' }</h3>
@@ -87,13 +87,13 @@ const Auth = observer(() => {
 
             <div className="mt-5 text-center">
                 {isLogin ?
-                    <p>Нет аккаунта?  <NavLink to={LOGIN_ROUTE} className="font-medium text-pink-dark">
+                    <p>Нет аккаунта?  <NavLink to={REGISTRATION_ROUTE} className="font-medium text-pink-dark">
                             Зарегистрируйтесь!
                         </NavLink>
                     </p>
                     :
                     <p>Есть аккаунт?  <NavLink to={LOGIN_ROUTE} className="font-medium text-pink-dark">
-                         Зарегистрируйтесь!
+                            Войти!
                         </NavLink>
                     </p>
                 }

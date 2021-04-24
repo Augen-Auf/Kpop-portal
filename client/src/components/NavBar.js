@@ -6,7 +6,6 @@ import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
 import {LOGIN_ROUTE, PROFILE_ROUTE, REGISTRATION_ROUTE} from "../utils/consts";
 import {observer} from "mobx-react-lite";
-
 const navigation = ['НОВОСТИ', 'СТАТЬИ', 'ТРЕНДЫ', 'МУЗЫКА', 'АНАЛИЗ'];
 const unauth_profile = [{title:'Войти', link: LOGIN_ROUTE}, {title:'Зарегистрироваться', link: REGISTRATION_ROUTE}];
 
@@ -19,20 +18,18 @@ const NavBar = observer(() => {
     const {user} = useContext(Context);
 
     const logOut = () => {
-        user.setUser({})
-        user.setIsAuth(false)
+        user.setUser({});
+        user.setIsAuth(false);
         localStorage.removeItem('token')
-    }
+    };
 
     const profile = [
         {title:'Мой профиль', link: PROFILE_ROUTE},
         {title:'Выйти', func: () => logOut()}
         ];
 
-
-
     return (
-        <div>
+        <div className='font-montserrat font-medium'>
             <Disclosure as="nav" className="bg-blue">
                 {({ open }) => (
                     <>
@@ -108,12 +105,13 @@ const NavBar = observer(() => {
                                                                         <Menu.Item key={'main_' + itIdx}>
                                                                             {({ active }) => (
                                                                                 <a
-                                                                                    href="#"
+                                                                                    href={item.link}
                                                                                     className={classNames(
                                                                                         active ? 'bg-gray-100' : '',
                                                                                         'block px-4 py-2 text-sm text-gray-700'
                                                                                     )}
-                                                                                    onClick={item.func}
+                                                                                    // onClick={item.func}
+                                                                                    // onClick={() => history.push(PROFILE_ROUTE)}
                                                                                 >
                                                                                     {item.title}
                                                                                 </a>

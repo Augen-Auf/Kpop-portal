@@ -1,9 +1,18 @@
-import {ADMIN_ROUTE, LOGIN_ROUTE, PROFILE_ROUTE, REGISTRATION_ROUTE, PORTAL_ROUTE, NEWS_ROUTE} from "./utils/consts";
+import {
+    ADMIN_ROUTE,
+    LOGIN_ROUTE,
+    PROFILE_ROUTE,
+    REGISTRATION_ROUTE,
+    PORTAL_ROUTE,
+    NEWS_ROUTE,
+    VIKIS_ROUTE
+} from "./utils/consts";
 import Admin from "./pages/Admin";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import Portal from "./pages/Portal";
 import News from "./pages/News";
+import Vikis from "./pages/Vikis";
 
 export const authRoutes = [
     {
@@ -17,7 +26,10 @@ export const authRoutes = [
 ];
 
 export const publicRoutes = [
-
+    {
+        path: VIKIS_ROUTE,
+        Component: Vikis
+    },
     {
         path: REGISTRATION_ROUTE,
         Component: Auth
