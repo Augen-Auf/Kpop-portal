@@ -5,7 +5,7 @@ import { useState } from "react";
 const Footer = observer(() => {
     const [mode, setMode] = useState("auto");
     return (
-        <div className="pt-12">
+        <div>
             <footer id="footer" className="relative font-montserrat font-normal bg-yellow">
                 <div className="py-10 flex flex-col justify-center items-center">
                     <p className="text-lg leading-none text-black">Мы в соц. сетях</p>

@@ -9,15 +9,17 @@ const AppRouter = () => {
 
     console.log(user);
     return (
-        <Switch>
-            {user.isAuth && authRoutes.map(({path, Component}) =>
-                <Route key={path} path={path} component={Component} exact/>
-            )}
-            {publicRoutes.map(({path, Component}) =>
-                <Route key={path} path={path} component={Component} exact/>
-            )}
-            {/*<Redirect to={PORTAL_ROUTE}/>*/}
-        </Switch>
+        <div className="flex-grow">
+            <Switch>
+                {user.isAuth && authRoutes.map(({path, Component}) =>
+                    <Route key={path} path={path} component={Component} exact/>
+                )}
+                {publicRoutes.map(({path, Component}) =>
+                    <Route key={path} path={path} component={Component} exact/>
+                )}
+                {/*<Redirect to={PORTAL_ROUTE}/>*/}
+            </Switch>
+        </div>
     );
 };
 

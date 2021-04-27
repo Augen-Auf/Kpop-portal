@@ -23,9 +23,11 @@ const App = observer(() => {
     }, []);
     return (
         <BrowserRouter>
-            <NavBar/>
-            <AppRouter/>
-            <Footer/>
+            <div className="flex flex-col min-h-screen">
+                <NavBar/>
+                <AppRouter/>
+                <Footer/>
+            </div>
         </BrowserRouter>
     );
 });
