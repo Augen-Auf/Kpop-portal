@@ -1,5 +1,4 @@
-const { SavedNews } = require('../models/models');
-const { News } = require('../models/models');
+const { SavedNews, News } = require('../models/models');
 
 class SavedNewsController {
     async create(req, res) {

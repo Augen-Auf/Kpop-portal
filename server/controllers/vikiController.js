@@ -20,7 +20,7 @@ class VikiController {
         return res.json(new_viki)
     }
 
-    async getOne(res, req) {
+    async getOne(req, res) {
         const id = req.params.id
         const viki = await Viki.findByPk(id);
         return res.json(viki)

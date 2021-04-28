@@ -1,4 +1,4 @@
-const {Tag} = require('../models/models');
+const {Tag, News} = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 class TagController {
@@ -11,6 +11,12 @@ class TagController {
     async getAll(req, res) {
         const tags = await Tag.findAll();
         return res.json(tags)
+    }
+
+    async getAllTagPublications(req, res) {
+        const id = req.params.id;
+        const news = await Image.findAll({include: News, where: {publication_id: id}});
+        return res.json(news)
     }
 }
 

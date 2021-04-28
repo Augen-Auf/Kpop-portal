@@ -1,4 +1,4 @@
-const {Comment} = require('../models/models');
+const { Comment } = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 class CommentController {
@@ -31,7 +31,7 @@ class CommentController {
         return res.json(new_comment)
     }
 
-    async getOne(res, req) {
+    async getOne(req, res) {
         const id = req.params.id
         const comment = await Comment.findByPk(id);
         return res.json(comment)

@@ -1,4 +1,4 @@
-const {News} = require('../models/models');
+const { News, Reaction, Comment, Image, Tag } = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 class NewsController {
@@ -23,7 +23,7 @@ class NewsController {
         return res.json(new_news)
     }
 
-    async getOne(res, req) {
+    async getOne(req, res) {
         const id = req.params.id
         const news = await News.findByPk(id);
         return res.json(news)
@@ -38,6 +38,30 @@ class NewsController {
         const id = req.params.id
         const result = await News.destroy({where: {id: id}})
         return res.json(result)
+    }
+
+    async getAllPublicationReactions(req, res) {
+        const id = req.params.id;
+        const reactions = await Reaction.findAll({include: Reaction, where: {publication_id: id}});
+        return res.json(reactions)
+    }
+
+    async getAllPublicationComments(req, res) {
+        const id = req.params.id;
+        const comments = await Comment.findAll({include: Comment, where: {publication_id: id}});
+        return res.json(comments)
+    }
+
+    async getAllPublicationImages(req, res) {
+        const id = req.params.id;
+        const images = await Image.findAll({include: Image, where: {publication_id: id}});
+        return res.json(images)
+    }
+
+    async getAllPublicationTags(req, res) {
+        const id = req.params.id;
+        const tags = await Tag.findAll({include: Tag, where: {publication_id: id}});
+        return res.json(tags)
     }
 
 }

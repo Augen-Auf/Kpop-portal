@@ -1,5 +1,4 @@
-const { UserSubscriber } = require('../models/models');
-const { User } = require('../models/models');
+const { UserSubscriber, User } = require('../models/models');
 
 class UserSubscriberController {
     async create(req, res) {
