@@ -16,30 +16,30 @@ class CommentController {
     async update(req, res) {
         const id = req.params.id;
         const {text, date, time, parent_id, likes, dislikes, user_id, publication_id} = req.body;
-        let Comment = await Comment.findByPk(id)
+        let comment = await Comment.findByPk(id);
 
-        Comment.text = text
-        Comment.date = date
-        Comment.time = time
-        Comment.parent_id = parent_id
-        Comment.likes = likes
-        Comment.dislikes = dislikes
-        Comment.user_id = user_id
-        Comment.publication_id = publication_id
+        comment.text = text;
+        comment.date = date;
+        comment.time = time;
+        comment.parent_id = parent_id;
+        comment.likes = likes;
+        comment.dislikes = dislikes;
+        comment.user_id = user_id;
+        comment.publication_id = publication_id;
 
-        const new_comment = await Comment.save()
+        const new_comment = await Comment.save();
         return res.json(new_comment)
     }
 
     async getOne(req, res) {
-        const id = req.params.id
+        const id = req.params.id;
         const comment = await Comment.findByPk(id);
         return res.json(comment)
     }
 
     async delete(req, res) {
-        const id = req.params.id
-        const result = await Comment.destroy({where: {id: id}})
+        const id = req.params.id;
+        const result = await Comment.destroy({where: {id: id}});
         return res.json(result)
     }
 

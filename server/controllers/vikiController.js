@@ -10,18 +10,18 @@ class VikiController {
     async update(req, res) {
         const id = req.params.id;
         const {title, lid, text, author_id} = req.body;
-        let Viki = await Viki.findByPk(id)
-        Viki.title = title
-        Viki.lid = lid
-        Viki.text = text
-        Viki.author_id = author_id
+        let viki = await Viki.findByPk(id);
+        viki.title = title;
+        viki.lid = lid;
+        viki.text = text;
+        viki.author_id = author_id;
 
-        const new_viki = await Viki.save()
+        const new_viki = await Viki.save();
         return res.json(new_viki)
     }
 
     async getOne(req, res) {
-        const id = req.params.id
+        const id = req.params.id;
         const viki = await Viki.findByPk(id);
         return res.json(viki)
     }
@@ -32,7 +32,7 @@ class VikiController {
     }
 
     async delete(req, res) {
-        const id = req.params.id
+        const id = req.params.id;
         const result = await Viki.destroy({where: {id: id}})
         return res.json(result)
     }

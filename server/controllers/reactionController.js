@@ -10,9 +10,9 @@ class ReactionController {
     async update(req, res) {
         const id = req.params.id;
         const { emotion } = req.body;
-        let Reaction = await Reaction.findByPk(id)
-        Reaction.emotion = emotion
-        const new_reaction = await Reaction.save()
+        let Reaction = await Reaction.findByPk(id);
+        Reaction.emotion = emotion;
+        const new_reaction = await Reaction.save();
         return res.json(new_reaction)
     }
 

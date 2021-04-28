@@ -10,8 +10,8 @@ class ImageController {
 
     async delete(req, res)
     {
-        const id = req.params.id
-        const result = await Image.destroy({where: {id: id}})
+        const id = req.params.id;
+        const result = await Image.destroy({where: {id: id}});
         return res.json(result)
     }
 

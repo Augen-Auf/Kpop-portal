@@ -9,19 +9,19 @@ class UserSubscriberController {
 
     async getSubscribers(req, res) {
         const user_id = req.params.id;
-        const userSubscribers = await UserSubscriber.getAll({include:User, where: {user_id: user_id}})
+        const userSubscribers = await UserSubscriber.getAll({include:User, where: {user_id: user_id}});
         return res.json(userSubscribers)
     }
     async getSubscriptions(req, res) {
         const user_id = req.params.id;
-        const userSubscribers = await UserSubscriber.getAll({include:User, where: {subscriber_id: user_id}})
+        const userSubscribers = await UserSubscriber.getAll({include:User, where: {subscriber_id: user_id}});
         return res.json(userSubscribers)
     }
 
     async unsubscribe(req, res) {
         const subscription_id = req.params.id;
         const { user_id } = req.body;
-        const result = await UserSubscriber.destroy({where: {user_id: subscription_id, subscriber_id: user_id }})
+        const result = await UserSubscriber.destroy({where: {user_id: subscription_id, subscriber_id: user_id }});
         return res.json(result)
     }
 }

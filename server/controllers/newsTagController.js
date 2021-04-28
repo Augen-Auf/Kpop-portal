@@ -9,8 +9,8 @@ class NewsTagController {
 
     async delete(req, res)
     {
-        const id = req.params.id
-        const result = await NewsTag.destroy({where: {id: id}})
+        const id = req.params.id;
+        const result = await NewsTag.destroy({where: {id: id}});
         return res.json(result)
     }
 

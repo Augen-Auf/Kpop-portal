@@ -9,7 +9,7 @@ class RoleController {
     }
     
     async getOne(req, res) {
-        const id = req.params.id
+        const id = req.params.id;
         const role = await Role.findByPk(id);
         return res.json(role)
     }

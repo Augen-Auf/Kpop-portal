@@ -11,20 +11,20 @@ class NewsController {
     async update(req, res) {
         const id = req.params.id;
         const {title, lid, text, type, views, author_id} = req.body;
-        let News = await News.findByPk(id)
-        News.title = title
-        News.lid = lid
-        News.text = text
-        News.type = type
-        News.views = views
-        News.author_id = author_id
+        let news = await News.findByPk(id);
+        news.title = title;
+        news.lid = lid;
+        news.text = text;
+        news.type = type;
+        news.views = views;
+        news.author_id = author_id;
 
-        const new_news = await News.save()
+        const new_news = await News.save();
         return res.json(new_news)
     }
 
     async getOne(req, res) {
-        const id = req.params.id
+        const id = req.params.id;
         const news = await News.findByPk(id);
         return res.json(news)
     }
@@ -35,8 +35,8 @@ class NewsController {
     }
 
     async delete(req, res) {
-        const id = req.params.id
-        const result = await News.destroy({where: {id: id}})
+        const id = req.params.id;
+        const result = await News.destroy({where: {id: id}});
         return res.json(result)
     }
 
