@@ -1,13 +1,22 @@
 import React, {useContext} from 'react';
 import {Context} from "../index";
-
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline'
-import {LOGIN_ROUTE, PROFILE_ROUTE, REGISTRATION_ROUTE} from "../utils/consts";
+import {
+    ARTICLES_ROUTE,
+    LOGIN_ROUTE,
+    MUSIC_ROUTE,
+    NEWS_ROUTE,
+    PROFILE_ROUTE,
+    REGISTRATION_ROUTE,
+    STATISTICS_ROUTE,
+    TRENDS_ROUTE
+} from "../utils/consts";
+
 import {observer} from "mobx-react-lite";
-const navigation = ['НОВОСТИ', 'СТАТЬИ', 'ТРЕНДЫ', 'МУЗЫКА', 'АНАЛИЗ'];
-const unauth_profile = [{title:'Войти', link: LOGIN_ROUTE}, {title:'Зарегистрироваться', link: REGISTRATION_ROUTE}];
+import {Link, useLocation} from "react-router-dom";
+
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -16,6 +25,11 @@ function classNames(...classes) {
 const NavBar = observer(() => {
 
     const {user} = useContext(Context);
+    const location = useLocation();
+
+    const navigation = [{title:'НОВОСТИ', link:NEWS_ROUTE},{title:'СТАТЬИ', link:ARTICLES_ROUTE},
+        {title:'ТРЕНДЫ', link:TRENDS_ROUTE}, {title:'МУЗЫКА', link:MUSIC_ROUTE}, {title:'АНАЛИЗ', link:STATISTICS_ROUTE}];
+    const unauth_profile = [{title:'Войти', link: LOGIN_ROUTE}, {title:'Зарегистрироваться', link: REGISTRATION_ROUTE}];
 
     const logOut = () => {
         user.setUser({});
@@ -26,7 +40,7 @@ const NavBar = observer(() => {
     const profile = [
         {title:'Мой профиль', link: PROFILE_ROUTE},
         {title:'Выйти', func: () => logOut()}
-        ];
+    ];
 
     return (
         <div className='font-montserrat font-medium'>
@@ -35,42 +49,28 @@ const NavBar = observer(() => {
                     <>
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                             <div className="flex items-center h-full">
-
                                 <div className="flex-shrink-0 w-2/12">
                                     <img
                                         className="h-12 w-90"
-                                        src="http://localhost:3000/img/Logo.svg"
-                                    />
+                                        src="http://localhost:3000/img/Logo.svg"/>
                                 </div>
                                 <div className="hidden md:block w-8/12">
                                     <div className="flex items-baseline justify-end">
                                     {navigation.map((item, itemIdx) =>
-                                        itemIdx === 0 ? (
-                                            <Fragment key={item}>
-                                                <a href="#" className="bg-pink text-black px-5 py-5 text-sm font-medium">
-                                                    {item}
-                                                </a>
-                                            </Fragment>
-                                        ) : (
-                                            <a
-                                                key={item}
-                                                href="#"
-                                                className="text-black bg-blue-dark hover:bg-pink px-5 py-5 text-sm font-medium"
-                                            >
-                                                {item}
-                                            </a>
-                                        )
+                                        <Fragment key={item}>
+                                            <Link to={item.link} className={`text-black bg-blue-dark ${location.pathname === item.link ? 'bg-pink':'hover:bg-pink'} px-5 py-5 text-sm font-medium`}>
+                                                {item.title}
+                                            </Link>
+                                        </Fragment>
                                     )}
                                     </div>
                                 </div>
-
                                 <div className="hidden md:block w-1/12">
                                     <div className="ml-4 flex items-center md:ml-6">
                                         <button className="bg-pink p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                                             <span className="sr-only">View notifications</span>
                                             <BellIcon className="h-6 w-6" aria-hidden="true" />
                                         </button>
-
                                         {/* Profile dropdown */}
                                         <Menu as="div" className="ml-3 relative">
                                             {({ open }) => (
@@ -110,7 +110,7 @@ const NavBar = observer(() => {
                                                                                         active ? 'bg-gray-100' : '',
                                                                                         'block px-4 py-2 text-sm text-gray-700'
                                                                                     )}
-                                                                                    // onClick={item.func}
+                                                                                    onClick={item.func}
                                                                                     // onClick={() => history.push(PROFILE_ROUTE)}
                                                                                 >
                                                                                     {item.title}

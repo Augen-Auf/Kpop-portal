@@ -12,7 +12,7 @@ import {Context} from "../index";
 const Auth = observer(() => {
 
     const { user } = useContext(Context);
-    const [authError, setAuthError] = useState();
+    const [authError, setAuthError] = useState(null);
 
     const location = useLocation();
     const history = useHistory();
