@@ -1,26 +1,24 @@
 import React, {useContext, useEffect, useRef, useState} from 'react';
-import Plot from '../../node_modules/react-plotly.js/react-plotly';
 import axios from 'axios';
 import {Context} from "../index";
+import {observer} from "mobx-react-lite";
 
-const Music = () => {
+const Music = observer(() => {
 
     const {user} = useContext(Context);
 
+    const [token, setToken] = useState();
+    const [newReleases, setNewReleases] = useState();
+    const [artistAlbums, setArtistAlbums] = useState();
+    const [albumTracks, setAlbumTracks] = useState();
     const artistQRef = useRef(null);
-    const audioQRef = useRef(null);
-
-    const [token, setToken] = useState('');
-    const [artist, setArtist] = useState('');
-    const [plotData, setPlotData] = useState({names:[], popularity:[]});
-    const [plotAudioData, setPlotAudioData] = useState();
 
     const market = 'KR';
     const search_type = 'artist';
-    const trackReqParams = ["acousticness", "danceability", "energy", "speechiness", "valence"];
+    const [artist, setArtist] = useState('');
 
-    useEffect(() => {
-        axios('https://accounts.spotify.com/api/token', {
+    useEffect(async () => {
+        const {data} = await axios('https://accounts.spotify.com/api/token', {
             'method': 'POST',
             'headers': {
                 'Content-Type':'application/x-www-form-urlencoded',
@@ -28,28 +26,47 @@ const Music = () => {
                     process.env.REACT_APP_SPOTIFY_KEY).toString('base64')),
             },
             data: 'grant_type=client_credentials'
-        }).then(tokenResponse => {
-            console.log(tokenResponse.data.access_token);
-            setToken(tokenResponse.data.access_token);
-        }).catch(error => console.log(error));
-    }, []);
+        });
+        setToken(data.access_token);
 
-    async function sendQHandler() {
-        const q = artistQRef.current.value;
-
-        const artistData = await getArtist(q);
-        setArtist(artistData);
-
-        const tracks = await getArtistsTracks(artistData.id);
-        let names = [], popularity = [];
-
-        tracks.map(each => {
-            names.push(each.name);
-            popularity.push(each.popularity);
+        const {data:albumsData} = await axios(`https://api.spotify.com/v1/browse/new-releases?country=${market}&offset=0`,{
+            'method': 'GET',
+            'headers': {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
         });
 
-        setPlotData({names, popularity})
-    }
+        let idsArtists =  albumsData.albums.items.map(item => item.artists.map(artist=>artist.id));
+        idsArtists = [].concat.apply([], idsArtists).filter((v, i, a) => a.indexOf(v) === i);
+
+        let artistsGenres = {};
+        let albums = albumsData.albums.items;
+        for (const element of idsArtists) {
+            const {data:artistData} = await axios(`https://api.spotify.com/v1/artists/${element}`,{
+                'method': 'GET',
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+            artistsGenres[element] = artistData.genres;
+        }
+
+        albums = albums.filter(value => {
+            const access_artist = value.artists.filter(artist => {
+                if(artistsGenres[artist.id].includes("k-pop") || artistsGenres[artist.id].includes("korean pop")
+                || artistsGenres[artist.id].includes("k-rap") || artistsGenres[artist.id].includes("k-indie"))
+                    return artist
+            });
+            if(access_artist.length > 0)
+                return value
+        });
+        setNewReleases(albums);
+    }, []);
+
     async function getArtist(q) {
         const {data} = await axios(`https://api.spotify.com/v1/search?query=${q}&type=${search_type}&limit=1`,{
             'method': 'GET',
@@ -62,8 +79,8 @@ const Music = () => {
         return data.artists.items[0]
     }
 
-    async function getArtistsTracks(id) {
-        const {data} = await axios(`https://api.spotify.com/v1/artists/${id}/top-tracks?market=${market}`,{
+    async function getArtistAlbums(id) {
+        const {data} = await axios(`https://api.spotify.com/v1/artists/${id}/albums`,{
             'method': 'GET',
             'headers': {
                 'Content-Type': 'application/json',
@@ -71,11 +88,22 @@ const Music = () => {
                 'Authorization': 'Bearer ' + token
             }
         });
-        return data.tracks
+        return data.items
     }
 
-    async function getTracksFeatures(tracksIdsString) {
-        const {data} = await axios(`https://api.spotify.com/v1/audio-features?ids=${tracksIdsString}`,{
+    async function sendQHandler() {
+        const q = artistQRef.current.value;
+
+        const artistData = await getArtist(q);
+        setArtist(artistData);
+
+        let albums = await getArtistAlbums(artistData.id);
+        albums = albums.filter(item => !item.available_markets.includes('JP'));
+        setArtistAlbums(albums)
+    }
+
+    async function getAlbumTracks(id) {
+        const {data} = await axios(`https://api.spotify.com/v1/albums/${id}/tracks`,{
             'method': 'GET',
             'headers': {
                 'Content-Type': 'application/json',
@@ -83,168 +111,60 @@ const Music = () => {
                 'Authorization': 'Bearer ' + token
             }
         });
-
-        return data.audio_features
+        setAlbumTracks(data.items)
     }
-    async function getTracksFeaturesHandler() {
-        const artistsNames = audioQRef.current.value.split(', ');
-        const artists = await Promise.all(artistsNames.map(async (item) => {
-            return await getArtist(item.trim())
-        }));
 
-        const artistsTracksFeatures = await Promise.all(artists.map(async (item) => {
-            const tracks = await getArtistsTracks(item.id);
-            const audioFeatures = await getTracksFeatures(tracks.map(track => track.id).join(','));
-            console.log(audioFeatures);
-
-            let trackReqParamsValues = {};
-            audioFeatures.forEach((track, index) => {
-                trackReqParams.forEach(param => {
-                    trackReqParamsValues[param] = (trackReqParamsValues[param] || 0) + track[param];
-                    if(index === audioFeatures.length - 1)
-                    {
-                        trackReqParamsValues[param] = trackReqParamsValues[param] / audioFeatures.length;
-                        if(param === "speechiness")
-                            trackReqParamsValues[param] = trackReqParamsValues[param] * 10;
-                    }
-
-                })
-            });
-            console.log(trackReqParamsValues);
-
-            return {artist: item.name, tracks_features: Object.values(trackReqParamsValues)}
-        }));
-
-        setPlotAudioData(artistsTracksFeatures.map(item => {
-            return {
-                r: item.tracks_features,
-                theta: trackReqParams,
-                name: item.artist,
-                marker: {color: '#'+(0x1000000+(Math.random())*0xffffff).toString(16).substr(1,6)}, //цвет
-                type: "scatterpolar",
-                fill: "toself",
-                font: {family: "Montserrat"}
-            }
-        }))
-
-    }
 
     return(
-        <div className="flex container mx-auto flex-col items-center font-montserrat font-normal text-black text-md">
-            <div className="flex flex-col">
-                <div className="flex flex-col w-1/2 mt-4">
-                    <label htmlFor="" className="block">Исполнитель:</label>
-                    <input type="text" ref={artistQRef} className="p-2 rounded-md"/>
-                    <div className="py-3">
-                        <button onClick={sendQHandler} className="py-2 px-4 bg-pink rounded-md">Построить</button>
-                    </div>
+        <div className="flex flex-col container mx-auto font-montserrat font-normal text-black text-md">
+            <div className="w-1/2 mt-4">
+                <label htmlFor="" className="block">Исполнитель:</label>
+                <input type="text" ref={artistQRef} className="p-2 rounded-md"/>
+                <div className="py-3">
+                    <button  onClick={sendQHandler} className="py-2 px-4 bg-pink rounded-md">Построить</button>
                 </div>
-                <Plot
-                    data={[
-                        {
-                            type: 'bar',
-                            x: plotData['popularity'],
-                            y: plotData['names'],
-                            marker: {color:'#FFC1F1'},
-                            orientation: 'h'
-                        }
-                    ]}
-                    layout={{
-                        width: 800,
-                        height: 500,
-                        title: `<b>Топ 10 треков ${artist.name || ''}</b>`,
-                        //pad:{l: 100, r: 100, b: 140, t: 120},
-                        paper_bgcolor: '#FFFFE1',
-                        plot_bgcolor: '#FFFFE1',
-                        font: {family: 'Montserrat', size: 16},
-                        xaxis: {
-                            automargin: true,
-                            title: {
-                                text:'Popularity',
-                                standoff:20
-                            },
-                            titlefont: {
-                                family: 'Montserrat',
-                                size: 14
-                            },
-                            showticklabels: true,
-                            tickfont:{
-                                family: 'Montserrat',
-                                size: 12
-                            }
-                        },
-                        yaxis: {
-                            automargin: true,
-
-                            showticklabels: true,
-                            tickfont: {
-                                family: 'Montserrat',
-                                size: 12
-                            }
-                        },
-                        hovermode: 'closest'
-                    }}
-                />
             </div>
-            <div className="flex flex-col items-center">
-                <div className="flex flex-col w-1/2 mt-4">
-                    <label htmlFor="" className="block">Исполнители:</label>
-                    <input type="text" ref={audioQRef} className="p-2 rounded-md"/>
-                    <div className="py-3">
-                        <button onClick={getTracksFeaturesHandler} className="py-2 px-4 bg-pink rounded-md">Построить</button>
-                    </div>
-                </div>
-                <div className="flex">
-                    <div className="flex flex-col w-1/4">
-                        <div className="text-wrap bg-pink p-3 rounded-md"><p className="font-medium">Valence (Валентность):</p> мера от 0.0 до 1.0, описывающая музыкальную позитивность,
-                            передаваемую треком. Треки с высокой валентностью звучат
-                            более позитивно, а треки с низкой валентностью - более негативные.
+            <div className="flex">
+                {artistAlbums && artistAlbums.map((item, index) => {
+                    return <div className="bg-yellow rounded-md mx-2" key={'album_' + index}>
+                        <div>
+                            <img src={item.images[0].url} alt="" className="h-4/5 w-full rounded-t-md"/>
                         </div>
-                        <div className="text-wrap bg-pink my-4 p-3 rounded-md"><p className="font-medium">SpeecHiness (Речивость):</p> определяет количество произнесенных слов в дорожке».
-                            Если речивость песен выше 0.66, они, вероятно, состоят из произнесенных слов, оценка от 0.33 до 0.66 означает,
-                            что песни содержать как музыку, так и слова, а оценка ниже 0.33 означает, что в песнях нет слов.
+                        <div className="p-2">
+                            <p  onClick={()=> getAlbumTracks(item.id)} className="font-bold hover:text-pink">{item.name}</p>
+                            <p>{item.artists.map(artist => artist.name).join(", ")}</p>
+                            <p className="bg-blue-dark rounded-md text-center">{item.release_date}</p>
                         </div>
                     </div>
-                    <div className="flex flex-col items-center">
-                        <Plot
-                            data = {plotAudioData}
-                            layout = {{
-                                width: 800,
-                                height: 500,
-                                title: `<b>Характеристика музыки исполнителей</b>`,
-                                margin:{l: 100, r: 100, b: 140, t: 120, pad: 4},
-                                font: {size: 16, family: "Montserrat"},
-                                legend: {font: {size: 16, family: "Montserrat"} },
-                                polar: {
-                                    barmode: "group",
-                                    bargap: 0.05,
-                                    radialaxis: {ticksuffix: "%", angle: 45, dtick: 20},
-                                    angularaxis: {direction: "clockwise"},
-                                },
-                                paper_bgcolor: '#FFFFE1',
-                                plot_bgcolor: '#FFFFE1',
-
-                            }}
-                        />
-                        <div className="flex">
-                            <div className="text-wrap bg-pink p-3 rounded-md my-4"><p className="font-medium">Acousticness (Акустичность):</p> значение описывает, насколько акустичны песни.
-                                Оценка 1.0 означает, что песни, скорее всего, акустические.
-                            </div>
+                })}
+            </div>
+            <div className="flex bg-pink">
+                {albumTracks && albumTracks.map((item, index) => {
+                    return <div className="flex bg-yellow rounded-md mx-2" key={'album_' + index}>
+                        <div className="flex flex-col p-2">
+                            <p className="font-bold">{item.name}</p>
+                            <p className="">№ {item.track_number}</p>
+                            <p className="">{Math.round((item.duration_ms / 60000)* 100) / 100} 🕙︎</p>
                         </div>
                     </div>
-                    <div className="flex flex-col w-1/4">
-                        <div className="text-wrap bg-pink p-3 rounded-md"> <p className="font-medium">Danceability (Танцевальность):</p> описывает, насколько песни подходят
-                            для танцев на основе комбинации музыкальных элементов, включая темп, стабильность ритма, силу удара и общую частотность.
-                            Значение 0.0 наименее танцевальные, а 1.0 - наиболее танцевальные.
+                })}
+            </div>
+            <div className="flex">
+                {newReleases && newReleases.map((item, index) => {
+                    return <div className="bg-yellow rounded-md mx-2" key={'album_' + index}>
+                        <div>
+                            <img src={item.images[0].url} alt="" className="h-4/5 w-full rounded-t-md"/>
                         </div>
-                        <div className="text-wrap bg-pink my-4 p-3 rounded-md"><p className="font-medium">Energy (Энергичность):</p> представляет собой перцептивную меру интенсивности и активности.
-                            Обычно энергичные песни кажутся быстрыми, громкими и шумными.
+                        <div className="p-2">
+                            <p className="font-bold">{item.name}</p>
+                            <p>{item.artists.map(artist => artist.name).join(", ")}</p>
+                            <p className="bg-blue-dark rounded-md text-center">{item.release_date}</p>
                         </div>
                     </div>
-                </div>
+                })}
             </div>
         </div>
     )
-};
+});
 
 export default Music;

@@ -57,7 +57,7 @@ const NavBar = observer(() => {
                                 <div className="hidden md:block w-8/12">
                                     <div className="flex items-baseline justify-end">
                                     {navigation.map((item, itemIdx) =>
-                                        <Fragment key={item}>
+                                        <Fragment key={'menu-item_' + itemIdx}>
                                             <Link to={item.link} className={`text-black bg-blue-dark ${location.pathname === item.link ? 'bg-pink':'hover:bg-pink'} px-5 py-5 text-sm font-medium`}>
                                                 {item.title}
                                             </Link>

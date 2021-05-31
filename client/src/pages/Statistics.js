@@ -13,7 +13,7 @@ const Statistics =() => {
     const [token, setToken] = useState('');
     const [artist, setArtist] = useState('');
     const [plotData, setPlotData] = useState({names:[], popularity:[]});
-    const [plotAudioData, setPlotAudioData] = useState();
+    const [plotAudioData, setPlotAudioData] = useState(null);
 
     const market = 'KR';
     const search_type = 'artist';
