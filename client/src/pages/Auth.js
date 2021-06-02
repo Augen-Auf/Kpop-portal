@@ -23,6 +23,8 @@ const Auth = observer(() => {
 
     const onSubmit = async (data) => {
         try {
+            setAuthError(null)
+
             let user_data;
             if (isLogin) {
                 user_data = await login(data.email, data.password).catch(err => { throw err })
@@ -31,8 +33,7 @@ const Auth = observer(() => {
             }
 
             console.log(user_data);
-
-            if(!authError) {
+            if(authError === null) {
                 user.setUser(user_data);
                 user.setIsAuth(true);
                 history.push(PORTAL_ROUTE)

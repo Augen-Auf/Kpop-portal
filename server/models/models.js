@@ -6,8 +6,13 @@ const User = sequelize.define('user', {
     email: {type: DataTypes.STRING, unique: true},
     name: {type: DataTypes.STRING, unique: true},
     password: {type: DataTypes.STRING},
-    avatar: {type: DataTypes.STRING, allowNull: true, defaultValue: null},
 });
+
+const Avatar = sequelize.define('avatars', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: {type: DataTypes.STRING},
+    img: {type:DataTypes.BLOB}
+})
 
 const News = sequelize.define('news', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
@@ -77,7 +82,7 @@ User.hasMany(News, {foreignKey: 'author_id', onDelete: 'SET NULL'});
 User.hasMany(Viki, {foreignKey: 'author_id', onDelete: 'SET NULL'});
 User.hasMany(Reaction, {foreignKey: 'user_id', onDelete: 'SET NULL'});
 User.hasMany(SavedNews, {foreignKey: 'user_id', onDelete: 'CASCADE'});
-
+User.belongsTo(Avatar, {as: 'avatar', allowNull: true, onUpdate:'SET NULL'})
 
 News.hasMany(Reaction, {foreignKey: 'publication_id', onDelete: 'CASCADE'});
 News.hasMany(Comment, {foreignKey: 'publication_id', onDelete: 'CASCADE'});
@@ -133,5 +138,6 @@ module.exports = {
     Image,
     Viki,
     SavedNews,
-    Tag
+    Tag,
+    Avatar
 };

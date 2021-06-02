@@ -9,7 +9,7 @@
     "@editorjs/image": "^2.6.0",
     "@editorjs/link": "^2.3.1",
     "@editorjs/marker": "^1.2.2",
-    "@headlessui/react": "^1.0.0",
+    "@headlessui/react": "^1.2.0",
     "@hookform/resolvers": "^2.4.0",
     "@tailwindcss/aspect-ratio": "^0.2.0",
     "@testing-library/jest-dom": "^5.11.10",
@@ -33,7 +33,7 @@
     "yup": "^0.32.9"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts --max_old_space_size=4096 start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

@@ -11,7 +11,7 @@ import {
 } from "./utils/consts";
 
 import Admin from "./pages/Admin";
-import Profile from "./pages/Profile";
+import Profile from "./pages/Profile/Profile";
 import Auth from "./pages/Auth";
 import Portal from "./pages/Portal";
 import News from "./pages/News";
@@ -25,14 +25,17 @@ import Articles from "./pages/Articles";
 export const authRoutes = [
     {
         path: ADMIN_ROUTE,
+        name: 'Админ-панель',
         Component: Admin
     },
     {
         path: PROFILE_ROUTE,
+        name: 'Профиль',
         Component: Profile
     },
     {
         path: CREATE_NEWS_ROUTE,
+        name: 'Создать новость',
         Component: CreateNews
     },
 ];
@@ -40,38 +43,47 @@ export const authRoutes = [
 export const publicRoutes = [
     {
         path: VIKIS_ROUTE,
+        name: 'Вики',
         Component: Vikis
     },
     {
         path: REGISTRATION_ROUTE,
+        name: 'Регистрация',
         Component: Auth
     },
     {
         path: LOGIN_ROUTE,
+        name: 'Авторизация',
         Component: Auth
     },
     {
         path: PORTAL_ROUTE,
+        name: 'Портал',
         Component: Portal
     },
     {
-        path: NEWS_ROUTE + '/:id',
+        path: NEWS_ROUTE,
+        name: 'Новости',
         Component: News
     },
     {
         path: STATISTICS_ROUTE,
+        name: 'Статистика',
         Component: Statistics
     },
     {
         path: MUSIC_ROUTE,
+        name: 'Музыка',
         Component: Music
     },
     {
         path: TRENDS_ROUTE,
+        name: 'Тренды',
         Component: Trends
     },
     {
         path: ARTICLES_ROUTE,
+        name: 'Статьи',
         Component: Articles
     },
 ];

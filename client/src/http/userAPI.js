@@ -1,5 +1,6 @@
 import {$authHost, $host} from './index'
 import jwt_decode from 'jwt-decode'
+import {LOGIN_ROUTE} from "../utils/consts";
 
 export const registration = async  (email, password, name) => {
     try {
@@ -35,3 +36,34 @@ export const check = async  () => {
         return null
     }
 };
+
+export const changePassword = async (userId, oldPassword, newPassword) => {
+    console.log(userId)
+    try {
+        const { data } = await $authHost.post('api/user/password/change', {userId, oldPassword, newPassword});
+        localStorage.removeItem('token');
+    }
+    catch (e) {
+        throw new Error(e.response.data.message)
+    }
+}
+
+export const updateUser = async (userId, name, email, avatar) => {
+    console.log(userId)
+    try {
+        let formData = new FormData()
+        formData.append('name', name)
+        formData.append('email', email)
+        formData.append('userId', userId)
+        formData.append('img', avatar)
+
+        const { data } = await $authHost.post('api/user/change', formData, {headers: {
+                'Content-Type': 'multipart/form-data'
+            }});
+        localStorage.setItem('token', data.token);
+        return jwt_decode(data.token)
+    }
+    catch (e) {
+        throw new Error(e.response.data.message)
+    }
+}

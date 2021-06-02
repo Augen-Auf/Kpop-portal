@@ -1,12 +1,12 @@
 const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {User} = require('../models/models');
+const {User, Avatar} = require('../models/models');
 const { Op } = require("sequelize");
 
-const generateJwt = (id, email, name, role_id) => {
+const generateJwt = (id, email, name, role_id, avatarId) => {
     return jwt.sign(
-        {id, email, name, role_id},
+        {id, email, name, role_id, avatarId},
         process.env.SECRET_KEY,
         {expiresIn: '24h'}
     );
@@ -24,7 +24,7 @@ class UserController {
         }
         const hashPassword = await bcrypt.hash(password, 5);
         const user = await User.create({email, name, password: hashPassword, role_id});
-        const token = generateJwt(user.id, user.email, user.name, user.role_id);
+        const token = generateJwt(user.id, user.email, user.name, user.role_id, user.avatarId);
         return res.json({token})
     };
 
@@ -38,13 +38,63 @@ class UserController {
         if(!comparePassword) {
             return next(ApiError.internal('Неверный email или пароль'))
         }
-        const token = generateJwt(user.id, user.email, user.name, user.role_id);
+        const token = generateJwt(user.id, user.email, user.name, user.role_id, user.avatarId);
         return res.json({token});
     };
 
     async check(req, res, next) {
-        const token = generateJwt(req.user.id, req.user.email, req.user.name, req.user.role_id);
+        const token = generateJwt(req.user.id, req.user.email, req.user.name, req.user.role_id, req.user.avatarId);
         return res.json({token});
+    }
+
+    async updateUser(req, res, next) {
+        const { userId, name, email } = req.body;
+
+        if(!email || !name || !userId) {
+            return next(ApiError.badRequest('Некорректный email или name'))
+        }
+
+        const user = await User.findOne({where: {id: userId}});
+
+        const avatar = await Avatar.findOne({where: {id: user.avatarId}});
+        let newAvatarId = null
+        const newAvatarImage = req.files
+
+        if(newAvatarImage) {
+            const {name: imageName, data} = newAvatarImage.img
+            const newAvatar = avatar ? await avatar.update({
+                    name: imageName,
+                    img: data
+                }) : await Avatar.create({name: imageName, img: data});
+            newAvatarId = newAvatar.id
+        }
+        else {
+            if(avatar) {
+                await avatar.destroy();
+            }
+        }
+
+        const updatedUser = await user.update({name, email, avatarId: newAvatarId})
+        const token = generateJwt(updatedUser.id, updatedUser.email, updatedUser.name, updatedUser.role_id, updatedUser.avatarId);
+
+        return res.json({token})
+    }
+
+    async changePassword(req, res, next) {
+        const {userId, oldPassword, newPassword} = req.body;
+
+        const user = await User.findOne({where: {id: userId}});
+        let comparePassword = bcrypt.compareSync(oldPassword, user.password);
+
+        if(!comparePassword) {
+            return next(ApiError.internal('Старый пароль не корректен'))
+        }
+        const hashNewPassword = await bcrypt.hash(newPassword, 5);
+
+        await user.update({
+            password: hashNewPassword
+        })
+        return res.json({update: 'success'})
     }
 }
 

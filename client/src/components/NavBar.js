@@ -10,13 +10,14 @@ import {
     NEWS_ROUTE,
     PROFILE_ROUTE,
     REGISTRATION_ROUTE,
+    ROUTE_NAMES,
     STATISTICS_ROUTE,
     TRENDS_ROUTE
 } from "../utils/consts";
 
 import {observer} from "mobx-react-lite";
 import {Link, useLocation} from "react-router-dom";
-
+import {publicRoutes, authRoutes} from "../routes";
 
 function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -27,9 +28,17 @@ const NavBar = observer(() => {
     const {user} = useContext(Context);
     const location = useLocation();
 
-    const navigation = [{title:'НОВОСТИ', link:NEWS_ROUTE},{title:'СТАТЬИ', link:ARTICLES_ROUTE},
-        {title:'ТРЕНДЫ', link:TRENDS_ROUTE}, {title:'МУЗЫКА', link:MUSIC_ROUTE}, {title:'АНАЛИЗ', link:STATISTICS_ROUTE}];
+    const routesList = [ ...publicRoutes, ...authRoutes ]
+
+    const navigation = [
+        {title:'НОВОСТИ', link:NEWS_ROUTE},
+        {title:'СТАТЬИ', link:ARTICLES_ROUTE},
+        {title:'ТРЕНДЫ', link:TRENDS_ROUTE},
+        {title:'МУЗЫКА', link:MUSIC_ROUTE},
+        {title:'АНАЛИЗ', link:STATISTICS_ROUTE},
+    ];
     const unauth_profile = [{title:'Войти', link: LOGIN_ROUTE}, {title:'Зарегистрироваться', link: REGISTRATION_ROUTE}];
+    const currentSectionTitle = routesList.find( item => location.pathname === item.path).name
 
     const logOut = () => {
         user.setUser({});
@@ -223,7 +232,7 @@ const NavBar = observer(() => {
 
             <header className="bg-pink">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <h1 className="text-3xl font-medium text-gray-900">Войти в аккаунт</h1>
+                    <h1 className="text-3xl font-medium text-gray-900">{ currentSectionTitle }</h1>
                 </div>
             </header>
         </div>
