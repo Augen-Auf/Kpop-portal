@@ -38,7 +38,7 @@ const NavBar = observer(() => {
         {title:'АНАЛИЗ', link:STATISTICS_ROUTE},
     ];
     const unauth_profile = [{title:'Войти', link: LOGIN_ROUTE}, {title:'Зарегистрироваться', link: REGISTRATION_ROUTE}];
-    const currentSectionTitle = routesList.find( item => location.pathname === item.path).name
+    const currentSectionTitle = routesList.find( item => location.pathname === item.path)?.name
 
     const logOut = () => {
         user.setUser({});
@@ -229,12 +229,13 @@ const NavBar = observer(() => {
                     </>
                 )}
             </Disclosure>
-
+            {currentSectionTitle &&
             <header className="bg-pink">
                 <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                     <h1 className="text-3xl font-medium text-gray-900">{ currentSectionTitle }</h1>
                 </div>
             </header>
+            }
         </div>
     );
 });

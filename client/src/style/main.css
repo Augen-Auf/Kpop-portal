@@ -27705,6 +27705,11 @@ video {
   --tw-backdrop-sepia: sepia(100%);
 }
 
+.ql-container {
+  font-size: 1rem !important;
+  line-height: 1.5rem;
+}
+
 @media (min-width: 640px){
   .sm\:container{
     width: 100%;

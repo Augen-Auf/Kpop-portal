@@ -3,16 +3,16 @@ const ApiError = require('../error/ApiError');
 
 class CommentController {
     async create(req, res) {
-        const {text, date, time, parent_id, likes, dislikes, user_id, publication_id} = req.body;
-        const comment = await Comment.create({text, date, time, parent_id, likes, dislikes, user_id, publication_id});
-        return res.json(comment)
+        const {text, parentId, user_id, publication_id} = req.body;
+        await Comment.create({text, parentId, likes:0, dislikes:0, user_id, publication_id});
+        return res.json({message: 'ok'})
     }
 
     async getAll(req, res) {
         const comments = await Comment.findAll();
         return res.json(comments)
     }
-    
+
     async update(req, res) {
         const id = req.params.id;
         const {text, date, time, parent_id, likes, dislikes, user_id, publication_id} = req.body;

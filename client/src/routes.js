@@ -15,6 +15,7 @@ import Profile from "./pages/Profile/Profile";
 import Auth from "./pages/Auth";
 import Portal from "./pages/Portal";
 import News from "./pages/News";
+import NewsPage from "./pages/NewsPage";
 import Vikis from "./pages/Vikis";
 import CreateNews from './pages/CreateNews';
 import Statistics from './pages/Statistics'
@@ -65,6 +66,11 @@ export const publicRoutes = [
         path: NEWS_ROUTE,
         name: 'Новости',
         Component: News
+    },
+    {
+        path: NEWS_ROUTE + '/:id',
+        name: '',
+        Component: NewsPage
     },
     {
         path: STATISTICS_ROUTE,

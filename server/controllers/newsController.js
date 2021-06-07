@@ -1,10 +1,26 @@
-const { News, Reaction, Comment, Image, Tag } = require('../models/models');
+const { News, Reaction, Comment, Image, Tag, NewsTag, User } = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 class NewsController {
-    async create(req, res) {
-        const {title, lid, text, type, views, author_id} = req.body;
+    async create(req, res, next) {
+        const {title, lid, text, type, views, author_id, tags} = req.body;
+        if(!title || !lid || !text) {
+            return next(ApiError.badRequest('Отсутсвует заголовок, лид или текст'))
+        }
         const news = await News.create({title, lid, text, type, views, author_id});
+
+        if(tags && tags.length > 0)
+        {
+            for(const item of tags)
+            {
+                let tag = await Tag.findOne({ where: { tag: item } });
+                console.log(tag)
+                if (!tag)
+                    tag = await Tag.create({ tag: item });
+
+                await NewsTag.create({publication_id: news.id, tag_id: tag.id});
+            }
+        }
         return res.json(news)
     }
 
@@ -25,8 +41,20 @@ class NewsController {
 
     async getOne(req, res) {
         const id = req.params.id;
-        const news = await News.findByPk(id);
-        return res.json(news)
+        const news = await News.findOne({where:{id:id}, include:[
+                {
+                    model: User,
+                    attributes: ['name', 'id']
+                },
+                {
+                    model: Tag,
+                    through: NewsTag
+                }
+            ]});
+        const comments = await Comment.findAll({where: {publication_id: news.id},  hierarchy: true, include:{
+                model: User
+            } })
+        return res.json({'news': news, 'comments':comments})
     }
 
     async getAll(req, res) {

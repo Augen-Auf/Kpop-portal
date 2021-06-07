@@ -17,6 +17,7 @@ const UpdateProfileForm = observer(({openForm}) => {
             email: user.user.email
         }
     });
+
     const changeAvatar = (e) => {
         console.log(e.target.files);
         setValue('avatarImage', e.target.files[0])
