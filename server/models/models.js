@@ -71,15 +71,13 @@ const NewsTag = sequelize.define('newsTag', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
 });
 
-const UserSubscriber = sequelize.define('userSubscriber', {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-});
-
 Role.hasMany(User, {foreignKey: 'role_id', allowNull: true});
 
 User.hasMany(Viki, {foreignKey: 'author_id', onDelete: 'SET NULL'});
 User.hasMany(Reaction, {foreignKey: 'user_id', onDelete: 'SET NULL'});
 User.hasMany(SavedNews, {foreignKey: 'user_id', onDelete: 'CASCADE'});
+User.hasMany(Comment, {foreignKey: 'user_id', onDelete: 'SET NULL'});
+User.hasMany(News, {foreignKey: 'author_id', onDelete: 'SET NULL'});
 User.belongsTo(Avatar, {as: 'avatar', allowNull: true, onUpdate:'SET NULL'})
 
 News.belongsTo(User, {foreignKey: 'author_id', onDelete: 'SET NULL'})
@@ -123,11 +121,9 @@ Viki.hasMany(Image, {
 
 Comment.belongsTo(User, {foreignKey: 'user_id', onDelete: 'SET NULL'});
 
+
 News.belongsToMany(Tag, {through: NewsTag, foreignKey: 'publication_id', onDelete: 'CASCADE'});
 Tag.belongsToMany(News, {through: NewsTag, foreignKey: 'tag_id', onDelete: 'CASCADE'});
-
-User.belongsToMany(User, {through: UserSubscriber, as: 'user', foreignKey: 'user_id', onDelete: 'CASCADE'});
-User.belongsToMany(User, {through: UserSubscriber, as: 'subscriber', foreignKey: 'subscriber_id', onDelete: 'CASCADE'});
 
 
 module.exports = {
