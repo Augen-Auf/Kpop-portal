@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
 import moment from "moment";
 import Comment from "./Comment";
+import CommentRating from "./CommentRating";
 
-const CommentCard = ({comment, authorId}) => {
-    const {id, text,likes, dislikes, children, createdAt, user, publication_id} = comment
+const CommentCard = ({comment, authorId, userId}) => {
+    const {id, text, children, createdAt, user, publication_id} = comment
 
     const [commentOpen, setCommentOpen] = useState(false)
     const localeDate = date => {
@@ -12,13 +13,7 @@ const CommentCard = ({comment, authorId}) => {
     }
 
 
-
-    const formatRating = (value) => {
-        return Math.floor(value/1000) > 0 ? Math.floor(value/1000) + 'K' : value
-    }
-
     const printSubComments = items => {
-
         return  items.map( item => <CommentCard comment={item} authorId={authorId}/>
         )
     }
@@ -33,21 +28,7 @@ const CommentCard = ({comment, authorId}) => {
                     <span className="text-xl font-semibold">{ user.name }</span>
                     <span className="text-sm text-gray-500">{ localeDate(createdAt) }</span>
                 </div>
-                <div className="group flex space-x-2 items-center">
-                    <div className="opacity-0 group-hover:opacity-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-gray-500 hover:text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 11l3-3m0 0l3 3m-3-3v8m0-13a9 9 0 110 18 9 9 0 010-18z" />
-                        </svg>
-                    </div>
-                    <div className="px-3 py-1 bg-pink rounded-md w-12 text-center">
-                        { formatRating(likes - dislikes) }
-                    </div>
-                    <div className="opacity-0 group-hover:opacity-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-gray-500 hover:text-gray-800" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z" />
-                        </svg>
-                    </div>
-                </div>
+                <CommentRating commentId={id} userId={authorId}/>
             </div>
             <div>
                 {text}

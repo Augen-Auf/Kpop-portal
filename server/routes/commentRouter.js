@@ -10,4 +10,8 @@ router.put('/:id', commentController.update)
 router.delete('/:id', commentController.delete)
 
 
+router.get('/:commentId/ratings', commentController.getCommentRatings)
+router.post('/:commentId/ratings/set', commentController.setCommentRating)
+
+
 module.exports = router;

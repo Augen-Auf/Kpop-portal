@@ -13,4 +13,7 @@ router.get('/:id/tags', newsController.getAllPublicationTags);
 router.put('/:id', newsController.update);
 router.delete('/:id', newsController.delete);
 
+router.get('/:id/reactions', newsController.getNewsReactions)
+router.post('/:id/reactions', newsController.setNewsReaction)
+
 module.exports = router;

@@ -1,16 +1,39 @@
-const { Comment } = require('../models/models');
+const { Comment, CommentRating } = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 class CommentController {
     async create(req, res) {
         const {text, parentId, user_id, publication_id} = req.body;
-        const newComment = await Comment.create({text, parentId, likes:0, dislikes:0, user_id, publication_id});
-        return res.json({message: 'ok'})
+        let newComment = await Comment.create({text, likes:0, dislikes:0, user_id, publication_id})
+        newComment = await newComment.update({parentId});
+        return res.json(newComment)
     }
 
     async getAll(req, res) {
         const comments = await Comment.findAll();
         return res.json(comments)
+    }
+
+    async getCommentRatings(req, res) {
+        const commentRatings = await CommentRating.findAll({where: {comment_id: req.params.commentId}});
+        return res.json(commentRatings)
+    }
+
+    async setCommentRating(req, res) {
+        const commentId = req.params.commentId;
+        const {userId, action, choice} = req.body;
+        const rating = await CommentRating.findOne({where: {comment_id: commentId, user_id: userId}})
+            .then(async (comment) => {
+                if(action === 'set')
+                    if(comment)
+                        return await comment.update({choice: choice})
+                    else
+                        return await CommentRating.create({comment_id: commentId, user_id: userId, choice})
+                else
+                    return await comment.destroy()
+            })
+
+        return res.json(rating)
     }
 
     async update(req, res) {

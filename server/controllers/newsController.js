@@ -62,6 +62,14 @@ class NewsController {
         return res.json(news)
     }
 
+    async getNewsReactions(req, res) {
+        return res.json([])
+    }
+
+    async setNewsReaction(req, res) {
+        re
+    }
+
     async delete(req, res) {
         const id = req.params.id;
         const result = await News.destroy({where: {id: id}});

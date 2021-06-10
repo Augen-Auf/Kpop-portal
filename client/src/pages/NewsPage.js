@@ -126,7 +126,7 @@ const NewsPage = observer(() => {
 
                         {/*Комментарии*/}
                         <div className="space-y-3">
-                            <p className="text-xl font-semibold">2 Комментария</p>
+                            <p className="text-xl font-semibold">{ comments.length } Комментариев</p>
 
                             <Comment newsId={newsObj.id} parentId={null} authorId={user.user.id}/>
 

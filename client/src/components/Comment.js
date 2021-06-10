@@ -23,6 +23,7 @@ const Comment = ({ newsId, authorId, parentId, className, commentOpen }) => {
 
     return (
         <div className={className ?? ''}>
+
             <textarea name="" id="" rows="7" className='w-full rounded-md px-3 py-2' ref={commentRef}/>
             <div className="flex items-center justify-between h-14">
                 <Gallery items={loadedImages} updateGallery={(images) => {

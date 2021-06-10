@@ -38,10 +38,13 @@ const Viki = sequelize.define('viki', {
 const Comment = sequelize.define('comment', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     text: {type: DataTypes.TEXT},
-    likes: {type: DataTypes.INTEGER},
-    dislikes: {type: DataTypes.INTEGER},
 }, {
     hierarchy: true
+});
+
+const CommentRating = sequelize.define('comment_rating', {
+    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    choice: {type: DataTypes.ENUM("up", "down")}
 });
 
 const Reaction = sequelize.define('reaction', {
@@ -78,6 +81,7 @@ User.hasMany(Reaction, {foreignKey: 'user_id', onDelete: 'SET NULL'});
 User.hasMany(SavedNews, {foreignKey: 'user_id', onDelete: 'CASCADE'});
 User.hasMany(Comment, {foreignKey: 'user_id', onDelete: 'SET NULL'});
 User.hasMany(News, {foreignKey: 'author_id', onDelete: 'SET NULL'});
+User.hasMany(CommentRating, {foreignKey: 'user_id', onDelete: 'CASCADE'});
 User.belongsTo(Avatar, {as: 'avatar', allowNull: true, onUpdate:'SET NULL'})
 
 News.belongsTo(User, {foreignKey: 'author_id', onDelete: 'SET NULL'})
@@ -122,6 +126,10 @@ Viki.hasMany(Image, {
 Comment.belongsTo(User, {foreignKey: 'user_id', onDelete: 'SET NULL'});
 
 
+CommentRating.belongsTo(Comment, {foreignKey: 'comment_id', onDelete: 'SET NULL'});
+CommentRating.belongsTo(User, {foreignKey: 'user_id', onDelete: 'SET NULL'});
+
+
 News.belongsToMany(Tag, {through: NewsTag, foreignKey: 'publication_id', onDelete: 'CASCADE'});
 Tag.belongsToMany(News, {through: NewsTag, foreignKey: 'tag_id', onDelete: 'CASCADE'});
 
@@ -132,6 +140,7 @@ module.exports = {
     News,
     Reaction,
     Comment,
+    CommentRating,
     Image,
     Viki,
     SavedNews,

@@ -15,7 +15,7 @@ const vikiRouter = require('./vikiRouter');
 
 router.use('/user', userRouter);
 // router.use('/userSubscriber', userSubscriberRouter);
-router.use('/comment', commentRouter);
+router.use('/comments', commentRouter);
 router.use('/news', newsRouter);
 router.use('/viki', vikiRouter);
 router.use('/tag', tagRouter);
