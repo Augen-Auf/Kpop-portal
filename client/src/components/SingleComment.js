@@ -1,25 +1,22 @@
 import React, {useState} from 'react';
-import moment from "moment";
-import CommentInput from "./CommentInput";
 import CommentRating from "./CommentRating";
+import CommentInput from "./CommentInput";
+import moment from "moment";
 
-const CommentCard = ({comment, authorId, userId}) => {
-    const {id, text, children, createdAt, user, publication_id} = comment
+const SingleComment = ({comment, newsId, updateCommentsList, authorId}) => {
+
+    const {id, text, parent_id, createdAt, user, publication_id} = comment
 
     const [commentOpen, setCommentOpen] = useState(false)
+
     const localeDate = date => {
         moment.locale('ru')
         return moment(date).calendar();
     }
 
 
-    const printSubComments = items => {
-        return  items.map( item => <CommentCard comment={item} authorId={authorId}/>
-        )
-    }
-
     return (
-        <div className="flex-col space-y-3 pl-3 py-2">
+        <div className="flex-col space-y-3">
             <div className="flex justify-between items-center space-x-3">
                 <div className="rounded-full h-14 w-14 bg-gray-500">
 
@@ -40,16 +37,11 @@ const CommentCard = ({comment, authorId, userId}) => {
                     </svg>
                 </button>
                 {
-                    commentOpen && <CommentInput authorId={authorId} newsId={publication_id} parentId={id} commentOpen={() => setCommentOpen(false)}/>
-                }
-            </div>
-            <div className="flex flex-col border-l-4 border-gray-500">
-                {children && children.length > 0 &&
-                printSubComments(children)
+                    commentOpen && <CommentInput authorId={authorId} newsId={publication_id} parentId={id} commentOpen={() => setCommentOpen(false)} updateCommentsList={updateCommentsList}/>
                 }
             </div>
         </div>
     );
 };
 
-export default CommentCard;
+export default SingleComment;

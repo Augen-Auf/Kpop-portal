@@ -37,6 +37,7 @@ const NewsReactions = ({userId, newsId}) => {
             }
             else
             {
+                setUserReaction(reaction)
                 newReactions[reaction] += 1
                 newReactions[userReaction] -= 1
             }

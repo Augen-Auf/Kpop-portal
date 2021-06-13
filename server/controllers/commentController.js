@@ -1,11 +1,15 @@
-const { Comment, CommentRating } = require('../models/models');
+const { Comment, CommentRating, User } = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 class CommentController {
     async create(req, res) {
-        const {text, parentId, user_id, publication_id} = req.body;
-        let newComment = await Comment.create({text, likes:0, dislikes:0, user_id, publication_id})
-        newComment = await newComment.update({parentId});
+        const {text, parent_id, user_id, publication_id} = req.body;
+        const newComment = await Comment.create({text, parent_id, likes:0, dislikes:0, user_id, publication_id})
+            .then(async(comment) => {
+
+            comment.dataValues['user'] = await User.findOne({where:{id: user_id}, attributes:['id', 'name']})
+            return comment;
+        })
         return res.json(newComment)
     }
 

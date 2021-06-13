@@ -3,10 +3,11 @@ import {useParams} from "react-router-dom";
 import {getOneNew} from "../http/NewsAPI";
 import moment from "moment";
 import 'moment/locale/ru'
-import Comment from "../components/Comment";
+import CommentInput from "../components/CommentInput";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
 import CommentCard from "../components/CommentCard";
+import Comments from "../components/Comments";
 
 const NewsPage = observer(() => {
     let { id } = useParams();
@@ -14,18 +15,7 @@ const NewsPage = observer(() => {
     const {user} = useContext(Context);
 
     const [newsObj, setNewsObj] = useState();
-    const [comments, setComments] = useState();
     const [loadedImages, setLoadedImages] = useState([]);
-
-    const printCommentsTree = (commentsNode) => {
-        console.log(commentsNode)
-        return commentsNode.map(item =>
-                    <div className="bg-yellow p-5 rounded-md">
-                        <CommentCard comment={item} authorId={user.user.id}/>
-                    </div>
-                )
-
-    }
 
     const getNew = async () => {
         return await getOneNew(id)
@@ -41,12 +31,10 @@ const NewsPage = observer(() => {
 
 
     useEffect(() => {
-        getNew().then( ({news, comments}) => {
+        getNew().then( ({news}) => {
                 console.log(news)
-                console.log(comments)
                 news.createdAt = moment(news.createdAt).format('DD.MM.YYYY')
                 setNewsObj(news)
-                setComments(comments)
             }
         )
     }, []);
@@ -125,22 +113,12 @@ const NewsPage = observer(() => {
                         </div>
 
                         {/*Комментарии*/}
-                        <div className="space-y-3">
-                            <p className="text-xl font-semibold">{ comments.length } Комментариев</p>
-
-                            <Comment newsId={newsObj.id} parentId={null} authorId={user.user.id}/>
-
-                            { comments &&
-                                <div className="space-y-4">
-                                    { printCommentsTree(comments) }
-                                </div>
-                            }
-                        </div>
+                         <Comments newsId={id}/>
                     </div>
                 </>
             }
         </div>
     );
-})
+});
 
 export default NewsPage;

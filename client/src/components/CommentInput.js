@@ -3,7 +3,7 @@ import Gallery from "./Gallery";
 import {useAmp} from "next/amp";
 import {createComment} from "../http/CommentAPI";
 
-const Comment = ({ newsId, authorId, parentId, className, commentOpen }) => {
+const CommentInput = ({ newsId, authorId, parentId, className, commentOpen, updateCommentsList }) => {
     const commentRef = useRef()
     const [loadedImages, setLoadedImages] = useState([])
 
@@ -15,9 +15,12 @@ const Comment = ({ newsId, authorId, parentId, className, commentOpen }) => {
         const commentText = commentRef.current.value;
 
         if(commentText.trim().length > 0) {
-            commentOpen()
+            if(commentOpen) {
+                commentOpen()
+            }
             const data = await createComment(newsId, authorId, commentText, parentId)
             console.log(data)
+            updateCommentsList(data)
         }
     }
 
@@ -47,4 +50,4 @@ const Comment = ({ newsId, authorId, parentId, className, commentOpen }) => {
     );
 };
 
-export default Comment;
+export default CommentInput;

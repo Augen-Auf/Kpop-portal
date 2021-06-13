@@ -51,10 +51,7 @@ class NewsController {
                     through: NewsTag
                 }
             ]});
-        const comments = await Comment.findAll({where: {publication_id: news.id},  hierarchy: true, include:{
-                model: User
-            } })
-        return res.json({'news': news, 'comments':comments})
+        return res.json({news})
     }
 
     async getAll(req, res) {
@@ -84,7 +81,7 @@ class NewsController {
 
     async getAllPublicationComments(req, res) {
         const id = req.params.id;
-        const comments = await Comment.findAll({include: Comment, where: {publication_id: id}});
+        const comments = await Comment.findAll({include: User, where: {publication_id: id}});
         return res.json(comments)
     }
 

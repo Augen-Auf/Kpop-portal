@@ -38,8 +38,6 @@ const Viki = sequelize.define('viki', {
 const Comment = sequelize.define('comment', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     text: {type: DataTypes.TEXT},
-}, {
-    hierarchy: true
 });
 
 const CommentRating = sequelize.define('comment_rating', {
@@ -122,7 +120,7 @@ Viki.hasMany(Image, {
     onDelete: 'CASCADE'
 });
 
-
+Comment.hasMany(Comment, {foreignKey: 'parent_id', onDelete: 'SET NULL'})
 Comment.belongsTo(User, {foreignKey: 'user_id', onDelete: 'SET NULL'});
 
 
