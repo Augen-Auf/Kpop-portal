@@ -48,7 +48,7 @@ export const changePassword = async (userId, oldPassword, newPassword) => {
     }
 }
 
-export const updateUser = async (userId, name, email, avatar) => {
+export const updateUser = async (userId, name, email, avatar, avatarAction) => {
     console.log(userId)
     try {
         let formData = new FormData()
@@ -56,10 +56,12 @@ export const updateUser = async (userId, name, email, avatar) => {
         formData.append('email', email)
         formData.append('userId', userId)
         formData.append('img', avatar)
+        formData.append('avatarAction', avatarAction)
 
         const { data } = await $authHost.post('api/user/change', formData, {headers: {
                 'Content-Type': 'multipart/form-data'
             }});
+        console.log('data', data)
         localStorage.setItem('token', data.token);
         return jwt_decode(data.token)
     }
@@ -67,3 +69,31 @@ export const updateUser = async (userId, name, email, avatar) => {
         throw new Error(e.response.data.message)
     }
 }
+
+export const getAvatar = async (id) => {
+    try {
+        const { data } = await $authHost.get('api/avatar/' + id);
+        return data
+    }
+    catch (e) {
+        throw new Error(e.response.data.message)
+    }
+}
+
+export const getNews = async (id) => {
+    const { data } = await $authHost.post(`api/user/news`, {userId: id})
+    console.log(data)
+    return data
+}
+
+export const getComments = async (id) => {
+    const { data } = await $authHost.post(`api/user/comments`, {userId: id})
+    console.log(data)
+    return data
+}
+export const getArticles = async (id) => {
+    const { data } = await $authHost.post(`api/user/articles`, {userId: id})
+    console.log(data)
+    return data
+}
+

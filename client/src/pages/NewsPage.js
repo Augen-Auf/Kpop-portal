@@ -1,16 +1,19 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {useParams} from "react-router-dom";
+import {useParams, useLocation} from "react-router-dom";
 import {getOneNew} from "../http/NewsAPI";
 import moment from "moment";
 import 'moment/locale/ru'
-import CommentInput from "../components/CommentInput";
 import {observer} from "mobx-react-lite";
 import {Context} from "../index";
-import CommentCard from "../components/CommentCard";
 import Comments from "../components/Comments";
+import NewsReactions from "../components/NewsReactions";
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import ReactTooltip from "react-tooltip";
+import {Link} from 'react-scroll'
 
 const NewsPage = observer(() => {
     let { id } = useParams();
+    const location = useLocation();
 
     const {user} = useContext(Context);
 
@@ -19,10 +22,6 @@ const NewsPage = observer(() => {
 
     const getNew = async () => {
         return await getOneNew(id)
-    }
-
-    const loadImage = (e) => {
-        setLoadedImages([...loadedImages, e.target.files[0]])
     }
 
     const transformToHTML = (text) => {
@@ -48,17 +47,32 @@ const NewsPage = observer(() => {
                             <h1 className="text-3xl font-medium text-gray-900">{ newsObj.title }</h1>
                         </div>
                     </header>
-
+                    <ReactTooltip id="copiedTip"
+                                  place="left"
+                                  className='bg-pink text-white'
+                                  event='click'
+                                  delayHide={2000}
+                                  effect='solid'
+                                  afterShow={() => ReactTooltip.hide()}
+                    >
+                        <span>Скопировано!</span>
+                    </ReactTooltip>
                     <div className="max-w-5xl container mx-auto px-10 py-3 space-y-3">
                         {/*Хлебные крошки*/}
                         <div className="flex justify-between">
                             <div className="flex space-x-4">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-pink" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-pink" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clipRule="evenodd" />
-                                </svg>
+                                <CopyToClipboard text={'http://localhost:3000' + location.pathname}>
+                                    <button data-for="copiedTip" data-tip className="focus:outline-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-pink" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
+                                        </svg>
+                                    </button>
+                                </CopyToClipboard>
+                                <Link to="commentSection" smooth={true} duration={700} className="flex items-center justify-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-pink" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clipRule="evenodd" />
+                                    </svg>
+                                </Link>
                             </div>
                             <div className="flex flex-col items-end">
                                 <span>{ newsObj.user.name }, { newsObj.createdAt }</span>
@@ -78,42 +92,24 @@ const NewsPage = observer(() => {
                             <div className="flex flex-wrap space-x-4">
                                 {
                                     newsObj.tags.map( item =>
-                                    <div className="px-3 py-2 border rounded-md bg-white">
-                                        {item.tag}
-                                    </div>
+                                        <div className="px-3 py-2 border rounded-md bg-white">
+                                            {item.tag}
+                                        </div>
                                     )
                                 }
                             </div>
                         </div>
 
                         {/*Эмодзи*/}
-                        <div className="flex justify-center">
-                            <div className="flex space-x-3 bg-yellow rounded-md p-3">
-                                <div className="flex flex-col items-center p-3 hover:bg-pink rounded-md">
-                                    <img src="/img/Emoji/happy.svg"  className="w-10 h-10"/>
-                                    <span>0</span>
-                                </div>
-                                <div className="flex flex-col items-center p-3 hover:bg-pink rounded-md">
-                                    <img src="/img/Emoji/sweat.svg"  className="w-10 h-10"/>
-                                    <span>0</span>
-                                </div>
-                                <div className="flex flex-col items-center p-3 hover:bg-pink rounded-md">
-                                    <img src="/img/Emoji/sad.svg"  className="w-10 h-10"/>
-                                    <span>0</span>
-                                </div>
-                                <div className="flex flex-col items-center p-3 hover:bg-pink rounded-md">
-                                    <img src="/img/Emoji/crying.svg"  className="w-10 h-10"/>
-                                    <span>0</span>
-                                </div>
-                                <div className="flex flex-col items-center p-3 hover:bg-pink rounded-md">
-                                    <img src="/img/Emoji/angry.svg"  className="w-10 h-10"/>
-                                    <span>0</span>
-                                </div>
+                        {user.user.id &&
+                            <div className="flex justify-center ">
+                                <NewsReactions userId={user.user.id} newsId={id}/>
                             </div>
-                        </div>
-
+                        }
                         {/*Комментарии*/}
+                        <div id="commentSection">
                          <Comments newsId={id}/>
+                        </div>
                     </div>
                 </>
             }

@@ -1,15 +1,16 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Dialog} from "@headlessui/react";
 import {EMAIL_REGEX} from "../../utils/consts";
 import {useForm} from "react-hook-form";
 import {Context} from "../../index";
 import {observer} from "mobx-react-lite";
-import {updateUser} from "../../http/userAPI";
+import {getAvatar, updateUser} from "../../http/userAPI";
 
 const UpdateProfileForm = observer(({openForm}) => {
 
     const {user} = useContext(Context);
     const [avatar, setAvatar] = useState(user.user.avatarId ? process.env.REACT_APP_API_URL + 'api/avatar/' + user.user.avatarId : null)
+    const [avatarAction, setAvatarAction] = useState(null)
 
     const {register, handleSubmit, formState: { errors }, setValue} = useForm({
         defaultValues: {
@@ -18,14 +19,19 @@ const UpdateProfileForm = observer(({openForm}) => {
         }
     });
 
+    const removeAvatar = () => {
+        setAvatar(null)
+        setAvatarAction('remove')
+    }
     const changeAvatar = (e) => {
         console.log(e.target.files);
+        setAvatarAction('set')
         setValue('avatarImage', e.target.files[0])
         setAvatar(URL.createObjectURL(e.target.files[0]))
     }
 
     const changeUserData = async ({name, email, avatarImage}) => {
-        const userData = await updateUser(user.user.id, name, email, avatarImage)
+        const userData = await updateUser(user.user.id, name, email, avatarImage, avatarAction)
         user.setUser(userData);
         openForm(false)
     }
@@ -59,7 +65,7 @@ const UpdateProfileForm = observer(({openForm}) => {
                             <span className="text-base leading-normal">Выберите фото</span>
                             <input type='file' className="hidden" onChange={(e) => changeAvatar(e)}/>
                         </label>
-                        <button type="button" className="px-3 py-2 bg-pink rounded-md" onClick={() => setAvatar(null)}>Сбросить</button>
+                        <button type="button" className="px-3 py-2 bg-pink rounded-md" onClick={() => removeAvatar()}>Сбросить</button>
                     </div>
 
                     <div className="flex flex-col w-full">

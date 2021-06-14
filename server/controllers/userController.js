@@ -1,7 +1,7 @@
 const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {User, Avatar} = require('../models/models');
+const {User, Avatar, News, Comment} = require('../models/models');
 const { Op } = require("sequelize");
 
 const generateJwt = (id, email, name, role_id, avatarId) => {
@@ -48,7 +48,7 @@ class UserController {
     }
 
     async updateUser(req, res, next) {
-        const { userId, name, email } = req.body;
+        const { userId, name, email, avatarAction } = req.body;
 
         if(!email || !name || !userId) {
             return next(ApiError.badRequest('Некорректный email или name'))
@@ -57,10 +57,10 @@ class UserController {
         const user = await User.findOne({where: {id: userId}});
 
         const avatar = await Avatar.findOne({where: {id: user.avatarId}});
-        let newAvatarId = null
+        let newAvatarId = avatar ? avatar.id : null
         const newAvatarImage = req.files
 
-        if(newAvatarImage) {
+        if(newAvatarImage && newAvatarImage.img) {
             const {name: imageName, data} = newAvatarImage.img
             const newAvatar = avatar ? await avatar.update({
                     name: imageName,
@@ -69,7 +69,8 @@ class UserController {
             newAvatarId = newAvatar.id
         }
         else {
-            if(avatar) {
+            if(avatar && avatarAction === 'remove') {
+                newAvatarId = null
                 await avatar.destroy();
             }
         }
@@ -96,6 +97,25 @@ class UserController {
         })
         return res.json({update: 'success'})
     }
+
+    async getUserNews(req, res, next) {
+        const { userId } = req.body
+        const news = await News.findAll({where: {author_id: userId, type:'news'}})
+        return res.json(news)
+    }
+
+    async getUserComments(req, res, next) {
+        const { userId } = req.body
+        const comments = await Comment.findAll({where: {user_id: userId}, include: News})
+        return res.json(comments)
+    }
+
+    async getUserArticles(req, res, next) {
+        const { userId } = req.body
+        const articles = await News.findAll({where: {author_id: userId, type:'articles'}})
+        return res.json(articles)
+    }
 }
+
 
 module.exports = new UserController();

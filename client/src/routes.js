@@ -7,7 +7,7 @@ import {
     NEWS_ROUTE,
     VIKIS_ROUTE,
     CREATE_NEWS_ROUTE,
-    STATISTICS_ROUTE, MUSIC_ROUTE, TRENDS_ROUTE, ARTICLES_ROUTE
+    STATISTICS_ROUTE, MUSIC_ROUTE, TRENDS_ROUTE, ARTICLES_ROUTE, UPDATE_NEWS_ROUTE
 } from "./utils/consts";
 
 import Admin from "./pages/Admin";
@@ -37,6 +37,11 @@ export const authRoutes = [
     {
         path: CREATE_NEWS_ROUTE,
         name: 'Создать новость',
+        Component: CreateNews
+    },
+    {
+        path: UPDATE_NEWS_ROUTE,
+        name: 'Изменить новость',
         Component: CreateNews
     },
 ];

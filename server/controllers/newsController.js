@@ -26,16 +26,40 @@ class NewsController {
 
     async update(req, res) {
         const id = req.params.id;
-        const {title, lid, text, type, views, author_id} = req.body;
+        let {title, lid, text, type, author_id, tags} = req.body;
         let news = await News.findByPk(id);
-        news.title = title;
-        news.lid = lid;
-        news.text = text;
-        news.type = type;
-        news.views = views;
-        news.author_id = author_id;
+        const new_news = await news.update({title, lid, text, type, author_id});
 
-        const new_news = await News.save();
+        const newsTags = await NewsTag.findAll({where: {publication_id: id}, include: Tag})
+
+        if(tags && tags.length > 0)
+        {
+            const curTagsArray = newsTags.map(item => item.tag.tag);
+            const addTagsArray = tags.filter(item => !curTagsArray.includes(item))
+            const removeTagsArray = curTagsArray.filter(item => !tags.includes(item))
+            for (const item of addTagsArray)
+            {
+                let tag = await Tag.findOne({ where: { tag: item } });
+                if (!tag)
+                    tag = await Tag.create({ tag: item });
+
+                await NewsTag.create({publication_id: news.id, tag_id: tag.id});
+            }
+
+            for (const item of removeTagsArray) {
+                const tag = await Tag.findOne({ where: { tag: item } });
+                const newTag = await NewsTag.findOne({where: {publication_id: id, tag_id: tag.id}})
+                await newTag.destroy()
+            }
+        }
+        else {
+            if(newsTags && newsTags.length > 0) {
+                for (const newsTag of newsTags) {
+                    await newsTag.destroy()
+                }
+            }
+        }
+
         return res.json(new_news)
     }
 
@@ -60,11 +84,28 @@ class NewsController {
     }
 
     async getNewsReactions(req, res) {
-        return res.json([])
+        const newsId = req.params.id
+        const reactions = await Reaction.findAll({where: {publication_id: newsId}})
+        return res.json(reactions)
     }
 
     async setNewsReaction(req, res) {
-        re
+        const newsId = req.params.id
+        const {userId, choice} = req.body;
+        const newReaction = await Reaction.findOne({where: {publication_id: newsId, user_id: userId}})
+            .then(async reaction => {
+            if(reaction)
+            {
+                if(reaction.emotion === choice)
+                    return await reaction.destroy()
+                else
+                    return await reaction.update({emotion: choice})
+            }
+            else {
+                return await Reaction.create({publication_id: newsId, user_id: userId, emotion: choice})
+            }
+        })
+        return res.json(newReaction)
     }
 
     async delete(req, res) {

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useContext} from 'react'
+import React, {useState, useRef, useContext, useEffect} from 'react'
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -7,17 +7,42 @@ import {useForm} from "react-hook-form";
 import {updateUser} from "../http/userAPI";
 import {Context} from "../index";
 import {observer} from "mobx-react-lite";
-import {createNews} from "../http/NewsAPI";
+import {createNews, getOneNew, updateNews} from "../http/NewsAPI";
+import {useHistory, useLocation, useParams} from "react-router-dom";
+import {UPDATE_NEWS_ROUTE} from "../utils/consts";
 
 
 const CreateNews = observer(() => {
 
+    let { id } = useParams();
     const {user} = useContext(Context);
+    const location = useLocation();
+    const history = useHistory();
+    const isUpdate = location.pathname.split('/').includes('update')
+
 
     const [text, setText] = useState('')
     const [tags, setTags] = useState([])
 
     const {register, handleSubmit, formState: { errors }, setValue} = useForm();
+
+    const getNew = async (id) => {
+        return await getOneNew(id)
+    }
+
+    useEffect(() => {
+        console.log(location.pathname)
+        if(isUpdate) {
+            console.log('war crimes')
+            getNew(id).then(r => {
+                const { news } = r
+                setText(news.text)
+                setTags(news.tags.map( item => item.tag))
+                setValue('lid', news.lid)
+                setValue('title', news.title)
+            })
+        }
+    },[])
 
     const modules = {
         toolbar: [
@@ -44,8 +69,16 @@ const CreateNews = observer(() => {
     }
 
     const addNew = async({title, lid}) => {
-        const { newsData } = await createNews(user.user.id, title, lid, text, 'news', 1, tags);
-        console.log(newsData)
+        if(isUpdate) {
+            console.log('update')
+            const newsData  = await updateNews(id, user.user.id, title, lid, text, 'news', tags);
+            console.log(newsData)
+            history.push('/news/'+ newsData.id)
+        }
+        else {
+            const newsData = await createNews(user.user.id, title, lid, text, 'news', 1, tags);
+            history.replace('/news/' + newsData.id)
+        }
     }
 
     const removeTagHandler = (tagName) => {
@@ -76,7 +109,7 @@ const CreateNews = observer(() => {
                         </div>
                         <div className="mb-4">
                             <label>Текст</label>
-                            <ReactQuill onChange={handleChange} modules={modules} formats={formats}/>
+                            <ReactQuill onChange={handleChange} modules={modules} formats={formats} value={text}/>
                         </div>
                         <div className="mb-4 w-full">
                             <div className="flex justify-between">

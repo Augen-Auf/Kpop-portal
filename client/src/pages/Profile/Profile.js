@@ -1,4 +1,4 @@
-import React, { Fragment, useContext, useState } from 'react';
+import React, { Fragment, useContext, useState, useEffect } from 'react';
 import {Context} from "../../index";
 import { Dialog, Transition } from '@headlessui/react'
 import {observer} from "mobx-react-lite";
@@ -7,7 +7,7 @@ import UserArticles from "./UserArticles";
 import UserComments from "./UserComments";
 import UpdateProfileForm from "./UpdateProfileForm";
 import UpdatePasswordForm from "./UpdatePasswordForm";
-import {$authHost, $host} from "../../http";
+import {getArticles, getComments, getNews} from "../../http/userAPI";
 
 const Profile = observer(() => {
 
@@ -15,11 +15,40 @@ const Profile = observer(() => {
 
     const [isOpen, setIsOpen] = useState(false)
     const [dialogForm, setDialogForm] = useState()
+    const [userComments, setUserComments] = useState(0)
+    const [userNews, setUserNews] = useState(0)
+    const [userArticles, setUserArticles] = useState(0)
+
+    const getUserNews = async (id) => {
+        return await getNews(id)
+    }
+
+    const getUserComments = async (id) => {
+        return await getComments(id)
+    }
+
+    const getUserArticles = async (id) => {
+        return await getArticles(id)
+    }
+
+    useEffect(() => {
+        getUserNews(user.user.id).then(r => {
+            console.log(r)
+            setUserNews(r && r.length > 0  ? r.length : 0)
+        });
+        getUserArticles(user.user.id).then(r => {
+            console.log('articles', r)
+            setUserArticles(r && r.length > 0 ? r.length : 0)
+        })
+        getUserComments(user.user.id).then(r => {
+            setUserComments(r && r.length > 0  ? r.length : 0)
+        })
+    }, [])
 
     const sections = [
-        {title: 'Новости', section: 'news', component: <UserNews/>},
-        {title: 'Статьи', section: 'articles', component: <UserArticles/>},
-        {title: 'Комментарии', section: 'comments', component: <UserComments/> }
+        {title: 'Новости', section: 'news', component: <UserNews userId={user.user.id}/>},
+        {title: 'Статьи', section: 'articles', component: <UserArticles userId={user.user.id}/>},
+        {title: 'Комментарии', section: 'comments', component: <UserComments userId={user.user.id}/> }
     ]
 
     const dialogs = {
@@ -49,11 +78,15 @@ const Profile = observer(() => {
                                     </div>
                                     <div className="flex justify-center space-x-4 bg-orange-200 rounded-md py-2">
                                         <div className="flex flex-col justify-center items-center">
-                                            <span className="text-2xl font-medium">10</span>
+                                            <span className="text-2xl font-medium">{ userNews }</span>
+                                            <span className="text-xs">новостей</span>
+                                        </div>
+                                        <div className="flex flex-col justify-center items-center">
+                                            <span className="text-2xl font-medium">{userArticles}</span>
                                             <span className="text-xs">статей</span>
                                         </div>
                                         <div className="flex flex-col justify-center items-center">
-                                            <span className="text-2xl font-medium">2</span>
+                                            <span className="text-2xl font-medium">{userComments}</span>
                                             <span className="text-xs">комментов</span>
                                         </div>
                                     </div>

@@ -7,7 +7,7 @@ const Tag = ({tagName, removeHandler}) => {
                                 <span className="ml-2 mr-1 leading-relaxed truncate max-w-xs px-1"
                                       x-text="tag">{tagName}</span>
             <button
-                className="w-6 h-8 inline-block align-middle text-gray-500 bg-blue-200 focus:outline-none">
+                className="w-6 h-8 inline-block align-middle text-gray-500 bg-blue-200 focus:outline-none" type="button">
                 <svg className="w-6 h-6 fill-current mx-auto" xmlns="http://www.w3.org/2000/svg"
                      onClick={() => removeHandler(tagName)}
                      viewBox="0 0 24 24">

@@ -30,7 +30,7 @@ const Comments = observer(({newsId}) => {
         <div className="space-y-3">
             <p className="text-xl font-semibold">{ comments.length } Комментариев</p>
 
-            <CommentInput newsId={newsId} parentId={null} authorId={user.user.id} updateCommentsList={updateCommentsList}/>
+            { user.user.id && <CommentInput newsId={newsId} parentId={null} authorId={user.user.id} updateCommentsList={updateCommentsList}/> }
 
             { comments &&
                 <div className="space-y-4">

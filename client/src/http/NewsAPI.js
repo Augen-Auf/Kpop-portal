@@ -11,6 +11,17 @@ export const createNews = async (author_id, title, lid, text, type, views, tags)
 
 };
 
+export const updateNews = async (news_id, author_id, title, lid, text, type, tags) => {
+    try {
+        const { data } = await $authHost.put('api/news/' + news_id, {author_id, title, lid, text, type, tags});
+        console.log(data)
+        return data
+    } catch (e) {
+        throw Error(e);
+    }
+
+};
+
 export const getOneNew = async (id) => {
     try {
         const { data } = await $host.get('api/news/' + id);
@@ -20,6 +31,15 @@ export const getOneNew = async (id) => {
     }
 
 };
+
+export const deleteNews = async (id) => {
+    try {
+        const { data } = await $host.delete('api/news/' + id);
+        return data
+    } catch (e) {
+        throw Error(e);
+    }
+}
 
 export const fetchNews = async  () => {
     const {data} = await $host.get('api/news');
@@ -31,7 +51,7 @@ export const getNewsReactions = async (newsId) => {
     return data
 }
 
-export const setNewsReaction = async (newsId, userId, reaction) => {
-    const { data } = await $host.post(`api/news/${newsId}/reactions`, {userId, reaction})
+export const setNewsReaction = async (userId, newsId, choice) => {
+    const { data } = await $host.post(`api/news/${newsId}/reactions`, {userId, choice})
     return data
 }
