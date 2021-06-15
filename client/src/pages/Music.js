@@ -1,5 +1,6 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState, Fragment} from 'react';
 import axios from 'axios';
+import { Dialog, Transition } from '@headlessui/react'
 import {Context} from "../index";
 import {observer} from "mobx-react-lite";
 
@@ -8,17 +9,28 @@ const Music = observer(() => {
     const {user} = useContext(Context);
 
     const [token, setToken] = useState();
-    const [newReleases, setNewReleases] = useState();
+    const [newReleases, setNewReleases] = useState([]);
     const [artistAlbums, setArtistAlbums] = useState();
     const [albumTracks, setAlbumTracks] = useState();
     const artistQRef = useRef(null);
+
+    let [isOpen, setIsOpen] = useState(false)
+
+    function closeModal() {
+        setIsOpen(false)
+    }
+
+    function openModal(id) {
+        getAlbumTracks(id).then(r => setIsOpen(true))
+
+    }
 
     const market = 'KR';
     const search_type = 'artist';
     const [artist, setArtist] = useState('');
 
     useEffect(async () => {
-        const {data} = await axios('https://accounts.spotify.com/api/token', {
+        const { data } = await axios('https://accounts.spotify.com/api/token', {
             'method': 'POST',
             'headers': {
                 'Content-Type':'application/x-www-form-urlencoded',
@@ -34,7 +46,7 @@ const Music = observer(() => {
             'headers': {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json',
-                'Authorization': 'Bearer ' + token
+                'Authorization': 'Bearer ' + data.access_token
             }
         });
 
@@ -49,7 +61,7 @@ const Music = observer(() => {
                 'headers': {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + data.access_token
                 }
             });
             artistsGenres[element] = artistData.genres;
@@ -116,54 +128,133 @@ const Music = observer(() => {
 
 
     return(
-        <div className="flex flex-col container mx-auto font-montserrat font-normal text-black text-md">
-            <div className="w-1/2 mt-4">
-                <label htmlFor="" className="block">Исполнитель:</label>
-                <input type="text" ref={artistQRef} className="p-2 rounded-md"/>
-                <div className="py-3">
-                    <button  onClick={sendQHandler} className="py-2 px-4 bg-pink rounded-md">Построить</button>
+        <>
+        <div className="flex flex-col mx-auto font-montserrat font-normal text-black text-md py-10">
+            <div className="bg-gray-600 py-10 bg-gradient-to-tr from-yellow to-pink">
+                <div className="container mx-auto flex flex-col space-y-4">
+                    <p className="text-white text-center text-2xl">Релизы месяца</p>
+                    <div className="flex space-x-4 mx-auto">
+                        {newReleases && newReleases.map((item, index) => {
+                            return <div className="bg-yellow rounded-md" key={'album_' + index}>
+                                <div>
+                                    <img src={item.images[0].url} alt="" className="h-72 w-68 rounded-t-md"/>
+                                </div>
+                                <div className="p-2">
+                                    <p className="font-bold">{item.name}</p>
+                                    <p>{item.artists.map(artist => artist.name).join(", ")}</p>
+                                    <p className="bg-blue-dark rounded-md text-center">{item.release_date}</p>
+                                </div>
+                            </div>
+                        })}
+                    </div>
                 </div>
             </div>
-            <div className="flex">
-                {artistAlbums && artistAlbums.map((item, index) => {
-                    return <div className="bg-yellow rounded-md mx-2" key={'album_' + index}>
-                        <div>
-                            <img src={item.images[0].url} alt="" className="h-4/5 w-full rounded-t-md"/>
-                        </div>
-                        <div className="p-2">
-                            <p  onClick={()=> getAlbumTracks(item.id)} className="font-bold hover:text-pink">{item.name}</p>
-                            <p>{item.artists.map(artist => artist.name).join(", ")}</p>
-                            <p className="bg-blue-dark rounded-md text-center">{item.release_date}</p>
-                        </div>
-                    </div>
-                })}
+            <div className="container mx-auto space-y-5">
+                <div className="mt-4 flex flex-col space-y-4 items-center w-full mx-auto">
+                    <label htmlFor="" className="block uppercase">Исполнитель</label>
+                    <input type="text" ref={artistQRef} className="p-2 rounded-md w-1/2"/>
+                    <button  onClick={sendQHandler} className="w-min py-2 px-4 bg-pink rounded-md">Построить</button>
+                </div>
+                <div className="grid grid-cols-5 gap-4">
+                    {artistAlbums && artistAlbums.map((item, index) => {
+                        return(
+                            <div className="bg-yellow rounded-md mx-2 flex flex-col justify-between" key={'album_' + index}>
+                                <div>
+                                    <img src={item.images[0].url} alt="" className="w-full rounded-t-md"/>
+                                </div>
+                                <div className="p-2 flex flex-col flex-grow justify-between">
+                                    <div>
+                                        <p onClick={()=> openModal(item.id)} className="font-bold hover:text-pink">{item.name}</p>
+                                        <p>{item.artists.map(artist => artist.name).join(", ")}</p>
+                                    </div>
+                                    <p className="bg-blue-dark rounded-md text-center">{item.release_date}</p>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+                {/*<div className="flex bg-pink">*/}
+                {/*    {albumTracks && albumTracks.map((item, index) => {*/}
+                {/*        return <div className="flex bg-yellow rounded-md mx-2" key={'album_' + index}>*/}
+                {/*            <div className="flex flex-col p-2">*/}
+                {/*                <p className="font-bold">{item.name}</p>*/}
+                {/*                <p className="">№ {item.track_number}</p>*/}
+                {/*                <p className="">{Math.round((item.duration_ms / 60000)* 100) / 100} 🕙︎</p>*/}
+                {/*            </div>*/}
+                {/*        </div>*/}
+                {/*    })}*/}
+                {/*</div>*/}
             </div>
-            <div className="flex bg-pink">
-                {albumTracks && albumTracks.map((item, index) => {
-                    return <div className="flex bg-yellow rounded-md mx-2" key={'album_' + index}>
-                        <div className="flex flex-col p-2">
-                            <p className="font-bold">{item.name}</p>
-                            <p className="">№ {item.track_number}</p>
-                            <p className="">{Math.round((item.duration_ms / 60000)* 100) / 100} 🕙︎</p>
-                        </div>
-                    </div>
-                })}
-            </div>
-            <div className="flex">
-                {newReleases && newReleases.map((item, index) => {
-                    return <div className="bg-yellow rounded-md mx-2" key={'album_' + index}>
-                        <div>
-                            <img src={item.images[0].url} alt="" className="h-4/5 w-full rounded-t-md"/>
-                        </div>
-                        <div className="p-2">
-                            <p className="font-bold">{item.name}</p>
-                            <p>{item.artists.map(artist => artist.name).join(", ")}</p>
-                            <p className="bg-blue-dark rounded-md text-center">{item.release_date}</p>
-                        </div>
-                    </div>
-                })}
-            </div>
+
         </div>
+            <Transition appear show={isOpen} as={Fragment}>
+                <Dialog
+                    as="div"
+                    className="fixed inset-0 z-10 overflow-y-auto"
+                    onClose={closeModal}
+                >
+                    <div className="min-h-screen px-4 text-center">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <Dialog.Overlay className="fixed inset-0" />
+                        </Transition.Child>
+
+                        {/* This element is to trick the browser into centering the modal contents. */}
+                        <span
+                            className="inline-block h-screen align-middle"
+                            aria-hidden="true"
+                        >
+              &#8203;
+            </span>
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 scale-95"
+                            enterTo="opacity-100 scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 scale-100"
+                            leaveTo="opacity-0 scale-95"
+                        >
+                            <div className="inline-block w-1/2 max-w-full p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                                <Dialog.Title
+                                    as="h3"
+                                    className="text-lg font-medium leading-6 text-gray-900"
+                                >
+                                    Содержание альбома
+                                </Dialog.Title>
+                                <div className='p-4 grid grid-cols-2 gap-4'>
+                                    {albumTracks && albumTracks.map((item, index) => {
+                                        return <div className="flex bg-yellow rounded-md justify-between" key={'album_' + index}>
+                                            <div className="flex flex-col p-2">
+                                                <p className="">№ {item.track_number}</p>
+                                                <p className="font-bold text-lg">{item.name}</p>
+                                            </div>
+                                            <div className="flex items-center justify-center p-2"><p className="">{Math.round((item.duration_ms / 60000)* 100) / 100} 🕙︎</p></div>
+                                        </div>
+                                    })}
+                                </div>
+                                <div className="">
+                                    <button
+                                        type="button"
+                                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-blue-900 bg-red-100 border border-transparent rounded-md hover:bg-red-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500"
+                                        onClick={closeModal}
+                                    >
+                                        Закрыть
+                                    </button>
+                                </div>
+                            </div>
+                        </Transition.Child>
+                    </div>
+                </Dialog>
+            </Transition>
+        </>
     )
 });
 
