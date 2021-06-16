@@ -2,6 +2,8 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import Plot from '../../node_modules/react-plotly.js/react-plotly';
 import axios from 'axios';
 import {Context} from "../index";
+import ReactToExcel from 'react-html-table-to-excel';
+import {trackDerivedFunction} from "mobx/dist/core/derivation";
 
 const Statistics =() => {
 
@@ -12,8 +14,10 @@ const Statistics =() => {
 
     const [token, setToken] = useState('');
     const [artist, setArtist] = useState('');
-    const [plotData, setPlotData] = useState({names:[], popularity:[]});
+    const [plotData, setPlotData] = useState(null);
     const [plotAudioData, setPlotAudioData] = useState(null);
+    const [DD, setDD] = useState(null);
+
 
     const market = 'KR';
     const search_type = 'artist';
@@ -36,19 +40,10 @@ const Statistics =() => {
 
     async function sendQHandler() {
         const q = artistQRef.current.value;
-
         const artistData = await getArtist(q);
         setArtist(artistData);
-
         const tracks = await getArtistsTracks(artistData.id);
-        let names = [], popularity = [];
-
-        tracks.map(each => {
-            names.push(each.name);
-            popularity.push(each.popularity);
-        });
-
-        setPlotData({names, popularity})
+        setPlotData(tracks)
     }
     async function getArtist(q) {
         const {data} = await axios(`https://api.spotify.com/v1/search?query=${q}&type=${search_type}&limit=1`,{
@@ -95,7 +90,6 @@ const Statistics =() => {
         const artistsTracksFeatures = await Promise.all(artists.map(async (item) => {
             const tracks = await getArtistsTracks(item.id);
             const audioFeatures = await getTracksFeatures(tracks.map(track => track.id).join(','));
-            console.log(audioFeatures);
 
             let trackReqParamsValues = {};
             audioFeatures.forEach((track, index) => {
@@ -110,11 +104,10 @@ const Statistics =() => {
 
                 })
             });
-            console.log(trackReqParamsValues);
-
             return {artist: item.name, tracks_features: Object.values(trackReqParamsValues)}
         }));
 
+        setDD(artistsTracksFeatures);
         setPlotAudioData(artistsTracksFeatures.map(item => {
             return {
                 r: item.tracks_features,
@@ -125,8 +118,7 @@ const Statistics =() => {
                 fill: "toself",
                 font: {family: "Montserrat"}
             }
-        }))
-
+        }));
     }
 
     return(
@@ -143,8 +135,8 @@ const Statistics =() => {
                     data={[
                         {
                             type: 'bar',
-                            x: plotData['popularity'],
-                            y: plotData['names'],
+                            x: plotData && plotData.map(item => item.popularity),
+                            y: plotData && plotData.map(item => item.name),
                             marker: {color:'#FFC1F1'},
                             orientation: 'h'
                         }
@@ -153,7 +145,6 @@ const Statistics =() => {
                         width: 800,
                         height: 500,
                         title: `<b>Топ 10 треков ${artist.name || ''}</b>`,
-                        //pad:{l: 100, r: 100, b: 140, t: 120},
                         paper_bgcolor: '#FFFFE1',
                         plot_bgcolor: '#FFFFE1',
                         font: {family: 'Montserrat', size: 16},
@@ -184,6 +175,32 @@ const Statistics =() => {
                         },
                         hovermode: 'closest'
                     }}
+                />
+                <table id="topSongs">
+                    <thead>
+                    <tr>
+                        <th>Songs</th>
+                        <th>Popularity</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {
+                            plotData && plotData.map((songs, index) => {
+                            const {name, popularity } = songs;
+                            return (<tr key={index + 1}>
+                                <td>{name}</td>
+                                <td>{popularity}</td>
+                            </tr>)
+                        })}
+                    </tbody>
+                </table>
+
+                <ReactToExcel
+                    className="btn"
+                    table="topSongs"
+                    filename="Top_10_Songs"
+                    sheet="sheet1"
+                    buttonText="Export"
                 />
             </div>
             <div className="flex flex-col items-center">
@@ -225,6 +242,39 @@ const Statistics =() => {
                                 plot_bgcolor: '#FFFFE1',
 
                             }}
+                        />
+                        <table id="propMusic">
+                            <thead>
+                            <tr>
+                                <th>Songs</th>
+                                <th>Popularity</th>
+                                {/*<th>Popularity</th>*/}
+                                {/*<th>Popularity</th>*/}
+                                {/*<th>Popularity</th>*/}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                DD && DD.map((character, index) => {
+                                    const {artist, values} = character;
+                                    return (<tr key={index + 1}>
+                                        <td>{artist}</td>
+                                        <td>{values.map((v, index) => {
+                                            return v
+                                        })}</td>
+                                        {console.log(DD)}
+
+                                    </tr>)
+                                })}
+                            </tbody>
+                        </table>
+
+                        <ReactToExcel
+                            className="btn"
+                            table="propMusic"
+                            filename="Characteristic"
+                            sheet="sheet1"
+                            buttonText="Export"
                         />
                         <div className="flex">
                             <div className="text-wrap bg-pink p-3 rounded-md my-4"><p className="font-medium">Acousticness (Акустичность):</p> значение описывает, насколько акустичны песни.
