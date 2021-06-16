@@ -55,3 +55,8 @@ export const setNewsReaction = async (userId, newsId, choice) => {
     const { data } = await $host.post(`api/news/${newsId}/reactions`, {userId, choice})
     return data
 }
+
+export const getAllTags = async () => {
+    const { data } = await $host.get(`api/tags`)
+    return data
+}

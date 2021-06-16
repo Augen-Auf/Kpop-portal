@@ -12,7 +12,7 @@ import {
     REGISTRATION_ROUTE,
     ROUTE_NAMES,
     STATISTICS_ROUTE,
-    TRENDS_ROUTE
+    TRENDS_ROUTE, VIKIS_ROUTE
 } from "../utils/consts";
 
 import {observer} from "mobx-react-lite";
@@ -32,7 +32,7 @@ const NavBar = observer(() => {
 
     const navigation = [
         {title:'НОВОСТИ', link:NEWS_ROUTE},
-        {title:'СТАТЬИ', link:ARTICLES_ROUTE},
+        {title:'ВИКИ', link:VIKIS_ROUTE},
         {title:'ТРЕНДЫ', link:TRENDS_ROUTE},
         {title:'МУЗЫКА', link:MUSIC_ROUTE},
         {title:'АНАЛИЗ', link:STATISTICS_ROUTE},

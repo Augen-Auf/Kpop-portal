@@ -97,7 +97,7 @@ const CreateNews = observer(() => {
                 <div className="w-4/6 p-5 bg-white min-h-3/4 mb-10 shadow-md rounded-md">
                     <form onSubmit={handleSubmit(addNew)}>
                         <div className="mb-4">
-                            <label>Загаловок</label>
+                            <label>Заголовок</label>
                             <input
                                 className="w-full border rounded-md py-2 px-3 focus:outline-none focus:border-pink"
                                 { ...register("title", {required: 'Обязательное поле для заполнения'})}/>

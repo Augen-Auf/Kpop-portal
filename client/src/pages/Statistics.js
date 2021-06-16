@@ -12,9 +12,10 @@ const Statistics =() => {
     const artistQRef = useRef(null);
     const audioQRef = useRef(null);
 
+
     const [token, setToken] = useState('');
     const [artist, setArtist] = useState('');
-    const [plotData, setPlotData] = useState(null);
+    const [plotData, setPlotData] = useState([]);
     const [plotAudioData, setPlotAudioData] = useState(null);
     const [DD, setDD] = useState(null);
 
