@@ -3,8 +3,7 @@ const router = new Router();
 const imageController = require('../controllers/imageController');
 
 
-router.post('/', imageController.create);
-router.delete('/:id', imageController.delete);
+router.get('/:id', imageController.getOne);
 
 
 module.exports = router;

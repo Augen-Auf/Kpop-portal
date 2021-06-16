@@ -65,7 +65,7 @@ class NewsController {
 
     async getOne(req, res) {
         const id = req.params.id;
-        const news = await News.findOne({where:{id:id}, include:[
+        let news = await News.findOne({where:{id:id}, include:[
                 {
                     model: User,
                     attributes: ['name', 'id']
@@ -75,11 +75,21 @@ class NewsController {
                     through: NewsTag
                 }
             ]});
+        news = await news.update({views: news.views + 1})
         return res.json({news})
     }
 
     async getAll(req, res) {
-        const news = await News.findAll();
+        const news = await News.findAll({ include:[
+            {
+                model: User,
+                attributes: ['name', 'id']
+            },
+            {
+                model: Tag,
+                through: NewsTag
+            }
+        ]});
         return res.json(news)
     }
 

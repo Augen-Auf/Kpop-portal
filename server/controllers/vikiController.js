@@ -1,28 +1,45 @@
-const {Viki} = require('../models/models');
+const {Viki, Image, User} = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 class VikiController {
     async create(req, res) {
-        const {title, lid, text, author_id} = req.body;
-        const viki = await Viki.create({title, lid, text, author_id});
-        return res.json(viki)
+        const {author_id, name, short_description, birthday, info} = req.body;
+        const {data: image} = req.files && req.files.image ? req.files.image : null
+        let newImageId = null
+        if(image) {
+            newImageId = await Image.create({image}).then(r => r.id)
+        }
+        const newViki = await Viki.create({author_id, name, short_description, birthday, info, image_id:newImageId})
+        return res.json(newViki)
     }
     async update(req, res) {
         const id = req.params.id;
-        const {title, lid, text, author_id} = req.body;
-        let viki = await Viki.findByPk(id);
-        viki.title = title;
-        viki.lid = lid;
-        viki.text = text;
-        viki.author_id = author_id;
+        const {name, short_description, birthday, info} = req.body;
+        const {data: image} = req.files && req.files.image ? req.files.image : null
+        const viki = await Viki.findOne({where: {id:id}});
 
-        const new_viki = await Viki.save();
+        const curImage = await Image.findOne({where: {id: viki.image_id}});
+        let newImageId = curImage ? curImage.id : null
+
+        if(image) {
+            const newImage = curImage ? await curImage.update({image}) : await Image.create({image});
+            newImageId = newImage.id
+        }
+        else {
+            if(curImage)
+            {
+                await curImage.destroy()
+            }
+        }
+
+        const new_viki = await viki.update({name, short_description, birthday, info, image_id:newImageId});
+
         return res.json(new_viki)
     }
 
     async getOne(req, res) {
         const id = req.params.id;
-        const viki = await Viki.findByPk(id);
+        const viki = await Viki.findOne({where: {id:id}, include: {model: User, attributes:['id', 'name']}});
         return res.json(viki)
     }
 

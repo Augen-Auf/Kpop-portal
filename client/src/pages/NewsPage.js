@@ -117,4 +117,4 @@ const NewsPage = observer(() => {
     );
 });
 
-export default NewsPage;
+export default NewsPage

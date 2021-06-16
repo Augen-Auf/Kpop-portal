@@ -10,9 +10,10 @@ const Statistics =() => {
     const artistQRef = useRef(null);
     const audioQRef = useRef(null);
 
+
     const [token, setToken] = useState('');
     const [artist, setArtist] = useState('');
-    const [plotData, setPlotData] = useState({names:[], popularity:[]});
+    const [plotData, setPlotData] = useState([]);
     const [plotAudioData, setPlotAudioData] = useState(null);
 
     const market = 'KR';
@@ -41,14 +42,8 @@ const Statistics =() => {
         setArtist(artistData);
 
         const tracks = await getArtistsTracks(artistData.id);
-        let names = [], popularity = [];
-
-        tracks.map(each => {
-            names.push(each.name);
-            popularity.push(each.popularity);
-        });
-
-        setPlotData({names, popularity})
+        console.log(tracks)
+        setPlotData(tracks)
     }
     async function getArtist(q) {
         const {data} = await axios(`https://api.spotify.com/v1/search?query=${q}&type=${search_type}&limit=1`,{
@@ -143,8 +138,8 @@ const Statistics =() => {
                     data={[
                         {
                             type: 'bar',
-                            x: plotData['popularity'],
-                            y: plotData['names'],
+                            x: plotData.map(item => item.popularity),
+                            y: plotData.map(item => item.name),
                             marker: {color:'#FFC1F1'},
                             orientation: 'h'
                         }

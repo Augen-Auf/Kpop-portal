@@ -7,7 +7,14 @@ import {
     NEWS_ROUTE,
     VIKIS_ROUTE,
     CREATE_NEWS_ROUTE,
-    STATISTICS_ROUTE, MUSIC_ROUTE, TRENDS_ROUTE, ARTICLES_ROUTE, UPDATE_NEWS_ROUTE
+    STATISTICS_ROUTE,
+    MUSIC_ROUTE,
+    TRENDS_ROUTE,
+    ARTICLES_ROUTE,
+    UPDATE_NEWS_ROUTE,
+    CREATE_VIKI_ROUTE,
+    UPDATE_VIKI_ROUTE,
+    VIKI_PAGE_ROUTE
 } from "./utils/consts";
 
 import Admin from "./pages/Admin";
@@ -16,12 +23,14 @@ import Auth from "./pages/Auth";
 import Portal from "./pages/Portal";
 import News from "./pages/News";
 import NewsPage from "./pages/NewsPage";
-import Vikis from "./pages/Vikis";
+import Vikis from "./pages/Vikis/Vikis";
 import CreateNews from './pages/CreateNews';
 import Statistics from './pages/Statistics'
 import Music from "./pages/Music";
 import Trends from "./pages/Trends";
 import Articles from "./pages/Articles";
+import CreateUpdateViki from "./pages/Vikis/CreateUpdateViki";
+import VikiPage from "./pages/Vikis/VikiPage";
 
 export const authRoutes = [
     {
@@ -51,6 +60,21 @@ export const publicRoutes = [
         path: VIKIS_ROUTE,
         name: 'Вики',
         Component: Vikis
+    },
+    {
+        path: CREATE_VIKI_ROUTE,
+        name: 'Создать вики-страничку',
+        Component: CreateUpdateViki
+    },
+    {
+        path: UPDATE_VIKI_ROUTE,
+        name: 'Обновить вики-страничку',
+        Component: CreateUpdateViki
+    },
+    {
+        path: VIKI_PAGE_ROUTE,
+        name: '',
+        Component: VikiPage
     },
     {
         path: REGISTRATION_ROUTE,

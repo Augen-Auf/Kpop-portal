@@ -30,9 +30,10 @@ const SavedNews = sequelize.define('savedNews', {
 
 const Viki = sequelize.define('viki', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    title: {type: DataTypes.STRING, unique: true},
-    lid: {type: DataTypes.TEXT},
-    text: {type: DataTypes.TEXT},
+    name: {type: DataTypes.STRING, unique: true},
+    short_description: {type: DataTypes.STRING},
+    birthday: {type: DataTypes.DATE},
+    info: {type: DataTypes.TEXT}
 });
 
 const Comment = sequelize.define('comment', {
@@ -52,8 +53,7 @@ const Reaction = sequelize.define('reaction', {
 
 const Image = sequelize.define('image', {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    image: {type: DataTypes.STRING},
-    type: {type: DataTypes.ENUM("news", "vikis")},
+    image: {type: DataTypes.BLOB},
 });
 
 const Tag = sequelize.define('tag', {
@@ -94,14 +94,6 @@ News.hasMany(SavedNews, {
     },
     onDelete: 'CASCADE'
 });
-News.hasMany(Image, {
-    foreignKey: 'publication_id',
-    constraints: false,
-    scope: {
-        type: "news"
-    },
-    onDelete: 'CASCADE'
-});
 
 
 Viki.hasMany(SavedNews, {
@@ -112,14 +104,9 @@ Viki.hasMany(SavedNews, {
     },
     onDelete: 'CASCADE'
 });
-Viki.hasMany(Image, {
-    foreignKey: 'publication_id',
-    constraints: false,
-    scope: {
-        type: "vikis"
-    },
-    onDelete: 'CASCADE'
-});
+
+Viki.belongsTo(Image, {foreignKey: 'image_id', allowNull: true, onDelete: 'SET NULL'})
+Viki.belongsTo(User, {foreignKey: 'author_id', onDelete: 'SET NULL'})
 
 Comment.hasMany(Comment, {foreignKey: 'parent_id', onDelete: 'SET NULL'})
 Comment.belongsTo(User, {foreignKey: 'user_id', onDelete: 'SET NULL'});

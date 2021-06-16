@@ -17,13 +17,13 @@ router.use('/user', userRouter);
 // router.use('/userSubscriber', userSubscriberRouter);
 router.use('/comments', commentRouter);
 router.use('/news', newsRouter);
-router.use('/viki', vikiRouter);
-router.use('/tag', tagRouter);
+router.use('/vikis', vikiRouter);
+router.use('/tags', tagRouter);
 router.use('/avatar', avatarRouter)
 // router.use('/savedNews', savedNewsRouter);
 // router.use('/role', roleRouter);
 // router.use('/newsTag', newsTagRouter);
-router.use('/image', imageRouter);
+router.use('/images', imageRouter);
 // router.use('/reaction', reactionRouter);
 
 module.exports = router;
