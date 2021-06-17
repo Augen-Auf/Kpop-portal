@@ -164,7 +164,7 @@ const Statistics = () => {
     return(
         <>
             <div className="flex justify-center font-montserrat font-normal text-black text-md py-10">
-                <div className="flex w-2/3 mx-auto flex-col items-center space-y-10">
+                <div className="flex w-1/2 mx-auto flex-col items-center space-y-10">
                     <div className="flex flex-col w-full">
                         <div className="flex flex-col w-4/6 mt-4">
                             <label htmlFor="" className="block">Исполнитель:</label>
@@ -175,7 +175,6 @@ const Statistics = () => {
                         </div>
                         <div className="flex space-x-4 w-full">
                         <Plot
-                            className="w-full"
                             data={[
                                 {
                                     type: 'bar',
@@ -226,7 +225,7 @@ const Statistics = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-col w-full">
+                    <div className="flex flex-col iy w-full">
                         <div className="flex flex-col justify-start w-4/6 mt-4">
                             <label htmlFor="" className="block">Исполнители:</label>
                             <input type="text" ref={audioQRef} className="p-2 rounded-md"/>
@@ -235,9 +234,8 @@ const Statistics = () => {
                             </div>
                         </div>
                         <div className="flex justify-center w-full space-x-4">
-                            <div className="flex flex-col items-center w-full space-y-4">
+                            <div className="flex flex-col w-full space-y-4">
                                 <Plot
-                                    className="w-full"
                                     data = {plotAudioData}
                                     layout = {{
                                         height: 500,
