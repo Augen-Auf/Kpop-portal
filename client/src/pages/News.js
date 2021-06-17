@@ -28,6 +28,13 @@ const News = () => {
         if(activeTag !== id) {
             setActiveTag(id)
             let filteringNews = await getAllNews()
+            if(filteringNews && filteringNews.length > 0)
+            {
+                filteringNews = filteringNews.map(item => {
+                    item.imageLink = item.image_id ? process.env.REACT_APP_API_URL + 'api/images/' + item.image_id : null
+                    return item
+                })
+            }
             setNews(filteringNews.filter(item => item.tags.find(tag => tag.id === id)).sort(sortNewsByDate))
         }
         else {
