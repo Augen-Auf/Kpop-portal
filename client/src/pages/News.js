@@ -75,9 +75,9 @@ const News = () => {
                     <div className="w-full grid grid-cols-3 gap-4">
                         { news && news.slice(2).map( item =>
                         <div
-                            className="py-5 rounded-md bg-cover h-48 bg-center flex items-end"
+                            className="py-5 rounded-md bg-pink h-48 bg-center flex items-end"
                             onClick={() => {history.push('/news/'+item.id)}}
-                            style={{backgroundImage:'url(/img/Rose.jpg)'}}>
+                            style={{backgroundImage: item.imageLink ? `url(${ item.imageLink })` : null, backgroundSize: 'cover'}}>
                             <div className="w-full p-2 bg-yellow bg-opacity-80">
                                 <span className="text-xs">
                                     {item.title}

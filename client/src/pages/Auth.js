@@ -5,7 +5,7 @@ import {observer} from "mobx-react-lite";
 // import * as yup from 'yup'
 
 
-import {EMAIL_REGEX, LOGIN_ROUTE, PORTAL_ROUTE, REGISTRATION_ROUTE} from "../utils/consts";
+import {EMAIL_REGEX, LOGIN_ROUTE, NEWS_ROUTE, PORTAL_ROUTE, REGISTRATION_ROUTE} from "../utils/consts";
 import {login, registration} from "../http/userAPI";
 import {Context} from "../index";
 
@@ -36,7 +36,7 @@ const Auth = observer(() => {
             if(authError === null) {
                 user.setUser(user_data);
                 user.setIsAuth(true);
-                history.push(PORTAL_ROUTE)
+                history.push(NEWS_ROUTE)
             }
         }
         catch (e) {

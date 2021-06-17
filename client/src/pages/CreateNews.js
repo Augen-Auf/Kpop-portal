@@ -8,6 +8,7 @@ import {Context} from "../index";
 import {observer} from "mobx-react-lite";
 import {createNews, getOneNew, updateNews} from "../http/NewsAPI";
 import {useHistory, useLocation, useParams} from "react-router-dom";
+import {PROFILE_ROUTE} from "../utils/consts";
 
 
 const CreateNews = observer(() => {
@@ -136,11 +137,13 @@ const CreateNews = observer(() => {
                             <input
                                 className="w-full border rounded-md py-2 px-3 focus:outline-none focus:border-pink"
                                 { ...register("title", {required: 'Обязательное поле для заполнения'})}/>
+                            {errors.title && <span className="text-red-500"> { errors.title.message } </span>}
                         </div>
                         <div className="mb-4">
                             <label>Лид</label>
                             <input className="w-full border rounded-md py-2 px-3 focus:outline-none focus:border-pink"
                                    { ...register("lid", {required: 'Обязательное поле для заполнения'})}/>
+                            {errors.lid && <span className="text-red-500"> { errors.lid.message } </span>}
                         </div>
                         <div className="mb-4">
                             <div>
@@ -194,11 +197,11 @@ const CreateNews = observer(() => {
                             </div>
                         </div>
                         <div className=" flex justify-between">
-                            <button type="button" className="py-2 px-3 bg-yellow rounded-md focus:outline-none focus:ring focus:ring-offset-2 focus:ring-pink">
+                            <button type="button" className="py-2 px-3 bg-yellow rounded-md focus:outline-none focus:ring focus:ring-offset-2 focus:ring-pink" onClick={() =>{history.push(PROFILE_ROUTE)}}>
                                 Отменить
                             </button>
                             <button type="submit" className="py-2 px-3 bg-pink rounded-md focus:outline-none focus:ring focus:ring-offset-2 focus:ring-pink">
-                                Добавить статью
+                                { isUpdate ? 'Обновить новость' : 'Добавить новость'}
                             </button>
                         </div>
                     </form>
