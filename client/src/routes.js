@@ -15,7 +15,7 @@ import {
     UPDATE_NEWS_ROUTE,
     CREATE_VIKI_ROUTE,
     UPDATE_VIKI_ROUTE,
-    VIKI_PAGE_ROUTE
+    VIKI_PAGE_ROUTE, SEARCH_ROUTE
 } from "./utils/consts";
 
 import Admin from "./pages/Admin";
@@ -32,6 +32,7 @@ import Trends from "./pages/Trends";
 import Articles from "./pages/Articles";
 import CreateUpdateViki from "./pages/Vikis/CreateUpdateViki";
 import VikiPage from "./pages/Vikis/VikiPage";
+import Search from "./components/Search";
 
 export const authRoutes = [
     {
@@ -67,6 +68,11 @@ export const authRoutes = [
 ];
 
 export const publicRoutes = [
+    {
+        path: SEARCH_ROUTE,
+        name: 'Поиск',
+        Component: Search
+    },
     {
         path: VIKIS_ROUTE,
         name: 'Вики',

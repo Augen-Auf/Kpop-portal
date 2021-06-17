@@ -102,7 +102,8 @@ const CreateNews = observer(() => {
         formData.append('text', text)
         formData.append('type', 'news')
         formData.append('author_id', user.user.id)
-        formData.append('tags', tags.join(','))
+        if (tags.length > 0)
+            formData.append('tags', tags.join(','))
         formData.append('image', image)
 
         if(isUpdate) {

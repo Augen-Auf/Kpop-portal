@@ -4,6 +4,7 @@ export const REGISTRATION_ROUTE = '/registration';
 export const PROFILE_ROUTE = '/profile';
 export const PORTAL_ROUTE = '/kpopworld';
 export const NEWS_ROUTE = '/news';
+export const SEARCH_ROUTE = '/search';
 export const NEWS_PAGE_ROUTE = '/news/:id';
 export const ARTICLES_ROUTE = '/articles';
 export const CREATE_NEWS_ROUTE = '/create/news';
