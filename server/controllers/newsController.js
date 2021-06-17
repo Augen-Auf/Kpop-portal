@@ -17,7 +17,7 @@ class NewsController {
 
         const news = await News.create({title, lid, text, type, views: 1, author_id, image_id: newImageId});
 
-        const tagsArray = tags.split(',').map(item => item.trim().toUpperCase())
+        const tagsArray = tags ? tags.split(',').map(item => item.trim().toUpperCase()) : null
         if(tagsArray && tagsArray.length > 0)
         {
             for(const item of tagsArray)
@@ -57,7 +57,7 @@ class NewsController {
 
         const newsTags = await NewsTag.findAll({where: {publication_id: id}, include: Tag})
 
-        const tagsArray = tags.split(',').map(item => item.trim().toUpperCase())
+        const tagsArray = tags ? tags.split(',').map(item => item.trim().toUpperCase()) : null
 
         if(tagsArray &&tagsArray.length > 0)
         {
