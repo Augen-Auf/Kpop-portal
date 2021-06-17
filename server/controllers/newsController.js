@@ -57,7 +57,7 @@ class NewsController {
 
         const newsTags = await NewsTag.findAll({where: {publication_id: id}, include: Tag})
 
-        const tagsArray = tags.split(',').map(item => item.trim.toUpperCase())
+        const tagsArray = tags.split(',').map(item => item.trim().toUpperCase())
 
         if(tagsArrays &&tagsArray.length > 0)
         {

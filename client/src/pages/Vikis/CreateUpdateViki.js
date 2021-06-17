@@ -117,11 +117,13 @@ const CreateUpdateViki = observer(() => {
                             <input
                                 className="w-full border rounded-md py-2 px-3 focus:outline-none focus:border-pink"
                                 { ...register("artistName", {required: 'Обязательное поле для заполнения'})}/>
+                            {errors.artistName && <span className="text-red-500"> { errors.artistName.message } </span>}
                         </div>
                         <div className="mb-4">
                             <label>Краткое описание</label>
                             <input className="w-full border rounded-md py-2 px-3 focus:outline-none focus:border-pink"
                                    { ...register("shortDescription", {required: 'Обязательное поле для заполнения'})}/>
+                            {errors.shortDescription && <span className="text-red-500"> { errors.shortDescription.message } </span>}
                         </div>
                         <div className="mb-4">
                             <label>Дата рождения</label>
