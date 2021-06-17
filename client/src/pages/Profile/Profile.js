@@ -3,11 +3,11 @@ import {Context} from "../../index";
 import { Dialog, Transition } from '@headlessui/react'
 import {observer} from "mobx-react-lite";
 import UserNews from "./UserNews";
-import UserArticles from "./UserArticles";
+import UserVikis from "./UserVikis";
 import UserComments from "./UserComments";
 import UpdateProfileForm from "./UpdateProfileForm";
 import UpdatePasswordForm from "./UpdatePasswordForm";
-import {getArticles, getComments, getNews} from "../../http/userAPI";
+import {getComments, getNews, getVikis} from "../../http/userAPI";
 
 const Profile = observer(() => {
 
@@ -17,7 +17,7 @@ const Profile = observer(() => {
     const [dialogForm, setDialogForm] = useState()
     const [userComments, setUserComments] = useState(0)
     const [userNews, setUserNews] = useState(0)
-    const [userArticles, setUserArticles] = useState(0)
+    const [userVikis, setUserVikis] = useState(0)
 
     const getUserNews = async (id) => {
         return await getNews(id)
@@ -27,8 +27,8 @@ const Profile = observer(() => {
         return await getComments(id)
     }
 
-    const getUserArticles = async (id) => {
-        return await getArticles(id)
+    const getUserVikis = async (id) => {
+        return await getVikis(id)
     }
 
     useEffect(() => {
@@ -36,9 +36,9 @@ const Profile = observer(() => {
             console.log(r)
             setUserNews(r && r.length > 0  ? r.length : 0)
         });
-        getUserArticles(user.user.id).then(r => {
+        getUserVikis(user.user.id).then(r => {
             console.log('articles', r)
-            setUserArticles(r && r.length > 0 ? r.length : 0)
+            setUserVikis(r && r.length > 0 ? r.length : 0)
         })
         getUserComments(user.user.id).then(r => {
             setUserComments(r && r.length > 0  ? r.length : 0)
@@ -47,7 +47,7 @@ const Profile = observer(() => {
 
     const sections = [
         {title: 'Новости', section: 'news', component: <UserNews userId={user.user.id}/>},
-        {title: 'Статьи', section: 'articles', component: <UserArticles userId={user.user.id}/>},
+        {title: 'Вики', section: 'vikis', component: <UserVikis userId={user.user.id}/>},
         {title: 'Комментарии', section: 'comments', component: <UserComments userId={user.user.id}/> }
     ]
 
@@ -82,8 +82,8 @@ const Profile = observer(() => {
                                             <span className="text-xs">новостей</span>
                                         </div>
                                         <div className="flex flex-col justify-center items-center">
-                                            <span className="text-2xl font-medium">{userArticles}</span>
-                                            <span className="text-xs">статей</span>
+                                            <span className="text-2xl font-medium">{userVikis}</span>
+                                            <span className="text-xs">вики</span>
                                         </div>
                                         <div className="flex flex-col justify-center items-center">
                                             <span className="text-2xl font-medium">{userComments}</span>

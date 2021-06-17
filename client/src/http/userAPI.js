@@ -1,6 +1,5 @@
 import {$authHost, $host} from './index'
 import jwt_decode from 'jwt-decode'
-import {LOGIN_ROUTE} from "../utils/consts";
 
 export const registration = async  (email, password, name) => {
     try {
@@ -91,8 +90,15 @@ export const getComments = async (id) => {
     console.log(data)
     return data
 }
+
 export const getArticles = async (id) => {
     const { data } = await $authHost.post(`api/user/articles`, {userId: id})
+    console.log(data)
+    return data
+}
+
+export const getVikis = async (id) => {
+    const { data } = await $authHost.post(`api/user/vikis`, {userId: id})
     console.log(data)
     return data
 }

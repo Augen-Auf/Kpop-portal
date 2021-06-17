@@ -4,7 +4,7 @@ const ApiError = require('../error/ApiError');
 class VikiController {
     async create(req, res) {
         const {author_id, name, short_description, birthday, info} = req.body;
-        const {data: image} = req.files && req.files.image ? req.files.image : null
+        const image = req.files && req.files.image ? req.files.image.data : null
         let newImageId = null
         if(image) {
             newImageId = await Image.create({image}).then(r => r.id)
@@ -15,9 +15,9 @@ class VikiController {
     async update(req, res) {
         const id = req.params.id;
         const {name, short_description, birthday, info} = req.body;
-        const {data: image} = req.files && req.files.image ? req.files.image : null
+        const image = req.files && req.files.image ? req.files.image.data : null
         const viki = await Viki.findOne({where: {id:id}});
-
+        console.log('image',image)
         const curImage = await Image.findOne({where: {id: viki.image_id}});
         let newImageId = curImage ? curImage.id : null
 
@@ -44,8 +44,8 @@ class VikiController {
     }
 
     async getAll(req, res) {
-        const viki = await Viki.findAll();
-        return res.json(viki)
+        const vikis = await Viki.findAll();
+        return res.json(vikis)
     }
 
     async delete(req, res) {

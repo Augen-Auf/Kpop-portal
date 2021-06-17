@@ -86,6 +86,9 @@ class NewsController {
                 attributes: ['name', 'id']
             },
             {
+                model: Comment,
+            },
+            {
                 model: Tag,
                 through: NewsTag
             }

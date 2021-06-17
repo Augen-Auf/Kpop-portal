@@ -16,6 +16,7 @@ const UserComments = ({ userId }) => {
     }
     useEffect(() => {
         getUserComments(userId).then(r => {
+            console.log('userComments', r)
             setUserComments(r)
         })
     }, [])

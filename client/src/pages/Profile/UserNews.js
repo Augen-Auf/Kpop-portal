@@ -20,7 +20,7 @@ const UserNews = ({ userId}) => {
 
     useEffect(() => {
         getUserNews(userId).then(r => {
-            console.log(r)
+            console.log('userNews', r)
             setUserNews(r)
         });
     }, [])

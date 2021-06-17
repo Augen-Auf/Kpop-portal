@@ -3,7 +3,6 @@ import Plot from '../../node_modules/react-plotly.js/react-plotly';
 import axios from 'axios';
 import {Context} from "../index";
 import ReactToExcel from 'react-html-table-to-excel';
-import {trackDerivedFunction} from "mobx/dist/core/derivation";
 
 const Statistics =() => {
 
@@ -17,7 +16,7 @@ const Statistics =() => {
     const [artist, setArtist] = useState('');
     const [plotData, setPlotData] = useState([]);
     const [plotAudioData, setPlotAudioData] = useState(null);
-    const [DD, setDD] = useState(null);
+    const [audioDataTable, setAudioDataTable] = useState([]);
 
 
     const market = 'KR';
@@ -100,7 +99,7 @@ const Statistics =() => {
                     {
                         trackReqParamsValues[param] = trackReqParamsValues[param] / audioFeatures.length;
                         if(param === "speechiness")
-                            trackReqParamsValues[param] = trackReqParamsValues[param] * 10;
+                            trackReqParamsValues[param] = trackReqParamsValues[param];
                     }
 
                 })
@@ -108,7 +107,15 @@ const Statistics =() => {
             return {artist: item.name, tracks_features: Object.values(trackReqParamsValues)}
         }));
 
-        setDD(artistsTracksFeatures);
+        console.log(artistsTracksFeatures)
+        setAudioDataTable(artistsTracksFeatures.map(item => {
+            let tableData = {artist: item.artist}
+            trackReqParams.forEach((param, index) => {
+                tableData[param] = item.tracks_features[index]
+            })
+            return tableData
+        }))
+
         setPlotAudioData(artistsTracksFeatures.map(item => {
             return {
                 r: item.tracks_features,
@@ -244,32 +251,26 @@ const Statistics =() => {
 
                             }}
                         />
+                        {audioDataTable && audioDataTable.length > 0 &&
                         <table id="propMusic">
                             <thead>
                             <tr>
-                                <th>Songs</th>
-                                <th>Popularity</th>
-                                {/*<th>Popularity</th>*/}
-                                {/*<th>Popularity</th>*/}
-                                {/*<th>Popularity</th>*/}
+                                <th/>
+                                {trackReqParams.map(item => <td>{item}</td>)}
                             </tr>
                             </thead>
                             <tbody>
                             {
-                                DD && DD.map((character, index) => {
-                                    const {artist, values} = character;
-                                    return (<tr key={index + 1}>
-                                        <td>{artist}</td>
-                                        <td>{values.map((v, index) => {
-                                            return v
-                                        })}</td>
-                                        {console.log(DD)}
-
-                                    </tr>)
-                                })}
+                                audioDataTable.map(item =>
+                                    <tr>
+                                        <td>{item.artist}</td>
+                                        {trackReqParams.map(param => <td>{String(item[param]).replace('.',',')}</td>)}
+                                    </tr>
+                                )
+                            }
                             </tbody>
                         </table>
-
+                        }
                         <ReactToExcel
                             className="btn"
                             table="propMusic"

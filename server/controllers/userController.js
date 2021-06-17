@@ -1,7 +1,7 @@
 const ApiError = require('../error/ApiError');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const {User, Avatar, News, Comment} = require('../models/models');
+const {User, Avatar, News, Comment, Viki} = require('../models/models');
 const { Op } = require("sequelize");
 
 const generateJwt = (id, email, name, role_id, avatarId) => {
@@ -114,6 +114,12 @@ class UserController {
         const { userId } = req.body
         const articles = await News.findAll({where: {author_id: userId, type:'articles'}})
         return res.json(articles)
+    }
+
+    async getUserVikis(req, res, next) {
+        const { userId } = req.body
+        const vikis = await Viki.findAll({where: {author_id: userId}})
+        return res.json(vikis)
     }
 }
 

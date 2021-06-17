@@ -73,7 +73,7 @@ export const publicRoutes = [
     },
     {
         path: VIKI_PAGE_ROUTE,
-        name: '',
+        name: 'Информация об исполнителе',
         Component: VikiPage
     },
     {

@@ -21,12 +21,6 @@ const VikiPage = () => {
         return await getOneViki(id)
     }
 
-    const removeViki = async (id) => {
-        deleteVikis(id).then(r => {
-            history.push('/vikis')
-        })
-    }
-
     const transformToHTML = (text) => {
         return {__html: text}
     }
@@ -53,9 +47,9 @@ const VikiPage = () => {
             {viki &&
             <div className="flex flex-col w-1/2 h-3/5 space-y-5">
                 <div className="flex bg-pink p-5 rounded-md w-full justify-between">
-                    <div className="flex">
-                        <div className="h-52 w-48 flex items-center rounded-md">
-                            <img src={viki.image_id ? viki.image_id : "img/Sunmi.jpg"} className="object-cover h-full rounded-md" alt=""/>
+                    <div className="flex space-x-5">
+                        <div className="h-52 w-48 flex items-center rounded-md bg-yellow">
+                            <img src={viki.image_id ? viki.image_id : null} className="object-cover h-full w-full rounded-md" alt=""/>
                         </div>
                         <div className="h-full flex flex-col justify-between">
                             <div className="flex flex-col space-y-3">
@@ -68,24 +62,6 @@ const VikiPage = () => {
                                         <span className="text-sm whitespace-nowrap">Дата рождения</span>
                                         <span className="text-center text-lg font-bold">{ viki.birthday }</span>
                                     </div>
-                                </div>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="flex space-x-4">
-                                    <button className="bg-white p-3 rounded-md hover:bg-yellow" onClick={() => {history.push('/update/vikis/' + id)}}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
-                                             viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                                        </svg>
-                                    </button>
-                                    <button className="bg-white p-3 rounded-md hover:bg-yellow" onClick={() => removeViki(id)}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none"
-                                             viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                    </button>
                                 </div>
                             </div>
                         </div>
