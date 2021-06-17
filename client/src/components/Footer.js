@@ -7,9 +7,9 @@ const Footer = observer(() => {
     return (
         <div>
             <footer id="footer" className="relative font-montserrat font-normal bg-yellow">
-                <div className="py-10 flex flex-col justify-center items-center">
+                <div className="py-6 flex flex-col justify-center items-center">
                     <p className="text-lg leading-none text-black">Мы в соц. сетях</p>
-                    <div className="flex items-center mb-4 mt-4">
+                    <div className="flex items-center mt-4">
                         <a href="#">
                             <div className="flex flex-col justify-center items-center">
                                 <svg aria-hidden="true" focusable="false" data-prefix="fab" data-icon="twitter"
@@ -41,7 +41,7 @@ const Footer = observer(() => {
                             </div>
                         </a>
                     </div>
-                    <p className="mt-10 leading-none text-black">© 2021 - K-WORLD-Последние новости индустрии K-POP. All Rights Reserved.</p>
+                    <p className="mt-4 leading-none text-black">© 2021 - K-WORLD-Последние новости индустрии K-POP. All Rights Reserved.</p>
                 </div>
             </footer>
         </div>
