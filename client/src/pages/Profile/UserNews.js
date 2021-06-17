@@ -44,7 +44,7 @@ const UserNews = ({ userId}) => {
             </div>
             { userNews && userNews.length > 0 ? userNews.map( item =>
                 <div className="mt-3 2xl:w-5/6 2xl:mx-auto w-full bg-pink flex sm:flex-row sm:justify-between flex-col rounded-md lg:items-center">
-                    <div className="flex lg:py-0 py-3 lg:w-3/4">
+                    <div className="flex lg:py-2 lg:px-2 py-3 lg:w-3/4">
                         <div className="lg:h-24 lg:w-24 w-40 h-40 rounded-md bg-pink">
                             {item.imageLink &&
                             <img src={item.imageLink} className="object-cover rounded-md w-full h-full" alt=""/>
