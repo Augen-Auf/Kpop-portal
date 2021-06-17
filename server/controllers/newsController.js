@@ -59,7 +59,7 @@ class NewsController {
 
         const tagsArray = tags.split(',').map(item => item.trim().toUpperCase())
 
-        if(tagsArrays &&tagsArray.length > 0)
+        if(tagsArray &&tagsArray.length > 0)
         {
             const curTagsArray = newsTags.map(item => item.tag.tag);
             const addTagsArray = tagsArray.filter(item => !curTagsArray.includes(item))
