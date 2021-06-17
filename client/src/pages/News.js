@@ -40,6 +40,13 @@ const News = () => {
     useEffect(() => {
         getAllNews().then(r => {
             console.log(r)
+            if(r && r.length > 0)
+            {
+                r = r.map(item => {
+                    item.imageLink = item.image_id ? process.env.REACT_APP_API_URL + 'api/images/' + item.image_id : null
+                    return item
+                })
+            }
             setNews(r.sort(sortNewsByDate))
         })
         getAllTags().then(r => {
@@ -52,11 +59,11 @@ const News = () => {
             <div className="max-w-7xl mx-auto flex justify-between py-10">
                 <div className="flex flex-col space-y-10 w-3/4 px-4 pb-10">
                     <div className="w-full grid grid-rows-3 grid-cols-2 gap-4">
-                        {news && news.slice(0,2).map( item =>
+                        {news && news.length > 0 && news.slice(0,2).map( item =>
                         <div
-                            className="py-5 rounded-md bg-cover bg-center row-span-3 flex items-end h-64"
+                            className="py-5 rounded-md bg-pink bg-center row-span-3 flex items-end h-64"
                             onClick={() => {history.push('/news/'+item.id)}}
-                            style={{backgroundImage:'url(/img/Rose.jpg)'}}>
+                            style={{backgroundImage: item.imageLink ? `url(${ item.imageLink })` : null, backgroundSize: 'cover'}}>
                             <div className="w-5/6 p-2 bg-yellow bg-opacity-80">
                                 <span>
                                     {item.title}

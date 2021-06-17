@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Context} from "../index";
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
@@ -27,6 +27,7 @@ const NavBar = observer(() => {
 
     const {user} = useContext(Context);
     const location = useLocation();
+    const [avatar,setAvatar] = useState()
 
     const routesList = [ ...publicRoutes, ...authRoutes ]
 
@@ -76,22 +77,17 @@ const NavBar = observer(() => {
                                 </div>
                                 <div className="hidden md:block w-1/12">
                                     <div className="ml-4 flex items-center md:ml-6">
-                                        <button className="bg-pink p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                            <span className="sr-only">View notifications</span>
-                                            <BellIcon className="h-6 w-6" aria-hidden="true" />
-                                        </button>
                                         {/* Profile dropdown */}
                                         <Menu as="div" className="ml-3 relative">
                                             {({ open }) => (
                                                 <>
                                                     <div>
                                                         <Menu.Button className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                                            <span className="sr-only">Open user menu</span>
-                                                            <img
-                                                                className="h-8 w-8 rounded-full"
-                                                                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                                                alt=""
-                                                            />
+                                                            <div className="rounded-full h-8 w-8 bg-pink">
+                                                                {user.user.avatarId &&
+                                                                <img src={process.env.REACT_APP_API_URL + 'api/avatar/' + user.user.avatarId} className="object-cover rounded-full w-full h-full" alt=""/>
+                                                                }
+                                                            </div>
                                                         </Menu.Button>
                                                     </div>
                                                     <Transition
@@ -197,10 +193,6 @@ const NavBar = observer(() => {
                                         <div className="text-base font-medium leading-none text-white">Tom Cook</div>
                                         <div className="text-sm font-medium leading-none text-gray-400">tom@example.com</div>
                                     </div>
-                                    <button className="ml-auto bg-pink flex-shrink-0 p-1 rounded-full text-white hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
-                                        <span className="sr-only">View notifications</span>
-                                        <BellIcon className="h-6 w-6" aria-hidden="true" />
-                                    </button>
                                 </div>
                                 <div className="mt-3 px-2 space-y-1">
                                     {user.isAuth ?

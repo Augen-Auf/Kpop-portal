@@ -83,8 +83,6 @@ const CreateUpdateViki = observer(() => {
         'link', 'image'
     ]
 
-    const tag = useRef(null)
-
     const handleChange = (value) => {
         console.log(value)
         setArtistInfo(value)
@@ -96,6 +94,7 @@ const CreateUpdateViki = observer(() => {
         formData.append('short_description', shortDescription)
         formData.append('birthday', birthday)
         formData.append('info', artistInfo)
+        formData.append('author_id', user.user.id)
         formData.append('image', image)
         if(isUpdate) {
             const newsData  = await updateVikis(id, formData);

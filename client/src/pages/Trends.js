@@ -33,6 +33,13 @@ const Trends = () => {
     useEffect(() => {
         getAllNews().then(r => {
             console.log(r)
+            if(r && r.length > 0)
+            {
+                r = r.map(item => {
+                    item.imageLink = item.image_id ? process.env.REACT_APP_API_URL + 'api/images/' + item.image_id : null
+                    return item
+                })
+            }
             const sortedNews = r.sort(sortNewsByDate)
             setTopNew(sortedNews[0])
             setNews(sortedNews.slice(1))
@@ -44,8 +51,8 @@ const Trends = () => {
             <div className="max-w-4xl mx-auto flex flex-col items-center font-montserrat font-normal text-black">
                 { topNew  && pageNumber === 0 &&
                     <div
-                        className="bg-yellow w-full h-96 flex flex-col justify-end py-5 mb-10 rounded-md"
-                        style={{backgroundImage: 'url("/img/Sunmi.jpg")', backgroundSize: 'cover'}}>
+                        className="bg-pink w-full h-96 flex flex-col justify-end py-5 mb-10 rounded-md"
+                        style={{backgroundImage: topNew.imageLink ? `url(${ topNew.imageLink })` : null, backgroundSize: 'cover'}}>>
                         <div className="w-5/6 px-3 py-4 bg-yellow bg-opacity-80 space-y-6">
                             <span className="text-2xl font-semibold" onClick={() => history.push('/news/'+topNew.id)}>
                                 { topNew.title }
@@ -89,7 +96,11 @@ const Trends = () => {
                                         </svg>
                                     </button>
                                 </div>
-                                <img src="img/Rose.jpg" className="object-scale-down h-52 w-52 rounded-md"/>
+                                <div className="h-52 w-52 rounded-md bg-pink">
+                                    {item.imageLink &&
+                                    <img src={item.imageLink} className="object-cover rounded-md w-full h-full" alt=""/>
+                                    }
+                                </div>
                             </div>
                         </div>
                     )

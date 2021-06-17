@@ -1,9 +1,9 @@
 import {$authHost, $host} from './index'
 import jwt_decode from 'jwt-decode'
 
-export const createNews = async (author_id, title, lid, text, type, views, tags) => {
+export const createNews = async (formData) => {
     try {
-        const { data } = await $authHost.post('api/news', {author_id, title, lid, text, type, views, tags});
+        const { data } = await $authHost.post('api/news', formData);
         return data
     } catch (e) {
         throw Error(e);
@@ -11,9 +11,9 @@ export const createNews = async (author_id, title, lid, text, type, views, tags)
 
 };
 
-export const updateNews = async (news_id, author_id, title, lid, text, type, tags) => {
+export const updateNews = async (news_id, formData) => {
     try {
-        const { data } = await $authHost.put('api/news/' + news_id, {author_id, title, lid, text, type, tags});
+        const { data } = await $authHost.put('api/news/' + news_id, formData);
         console.log(data)
         return data
     } catch (e) {

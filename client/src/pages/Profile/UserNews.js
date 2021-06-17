@@ -21,6 +21,13 @@ const UserNews = ({ userId}) => {
     useEffect(() => {
         getUserNews(userId).then(r => {
             console.log('userNews', r)
+            if(r && r.length > 0)
+            {
+                r = r.map(item => {
+                    item.imageLink = item.image_id ? process.env.REACT_APP_API_URL + 'api/images/' + item.image_id : null
+                    return item
+                })
+            }
             setUserNews(r)
         });
     }, [])
@@ -38,7 +45,11 @@ const UserNews = ({ userId}) => {
             { userNews && userNews.length > 0 ? userNews.map( item =>
                 <div className="mt-3 2xl:w-5/6 2xl:mx-auto w-full bg-pink flex sm:flex-row sm:justify-between flex-col rounded-md lg:items-center">
                     <div className="flex lg:py-0 py-3 lg:w-3/4">
-                        <img src="img/Rose.jpg" className="object-scale-down lg:h-24 lg:w-24 w-40 h-40 rounded-md mx-2 my-2" alt=""/>
+                        <div className="lg:h-24 lg:w-24 w-40 h-40 rounded-md bg-pink mx-2 my-2">
+                            {item.imageLink &&
+                            <img src={item.imageLink} className="object-cover rounded-md w-full h-full" alt=""/>
+                            }
+                        </div>
                         <div className="flex flex-grow lg:flex-row flex-col lg:items-center justify-center">
                             <p className="mx-8 font-medium w-3/4 lg:text-lg" onClick={() => { history.push('/news/'+item.id) }}>{ item.lid }</p>
                             <p className="mx-8 w-1/4 lg:text-md text-sm">Добавлено: { moment(item.createdAt).format('DD.MM.YYYY') }</p>

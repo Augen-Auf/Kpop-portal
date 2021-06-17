@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import CommentRating from "./CommentRating";
 import CommentInput from "./CommentInput";
 import moment from "moment";
@@ -8,18 +8,26 @@ const SingleComment = ({comment, newsId, updateCommentsList, authorId}) => {
     const {id, text, parent_id, createdAt, user, publication_id} = comment
 
     const [commentOpen, setCommentOpen] = useState(false)
+    const [avatar,setAvatar] = useState()
 
     const localeDate = date => {
         moment.locale('ru')
         return moment(date).calendar();
     }
 
+    useEffect(() => {
+        if(user.avatarId)
+            setAvatar(process.env.REACT_APP_API_URL + 'api/avatar/' + user.avatarId)
+    },[])
+
 
     return (
         <div className="flex-col space-y-3">
             <div className="flex justify-between items-center space-x-3">
-                <div className="rounded-full h-14 w-14 bg-gray-500">
-
+                <div className="rounded-full h-14 w-14 bg-pink">
+                    {avatar &&
+                        <img src={avatar} className="object-cover rounded-full w-full h-full" alt=""/>
+                    }
                 </div>
                 <div className="flex flex-col flex-grow">
                     <span className="text-xl font-semibold">{ user.name }</span>

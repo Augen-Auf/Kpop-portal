@@ -17,7 +17,6 @@ class VikiController {
         const {name, short_description, birthday, info} = req.body;
         const image = req.files && req.files.image ? req.files.image.data : null
         const viki = await Viki.findOne({where: {id:id}});
-        console.log('image',image)
         const curImage = await Image.findOne({where: {id: viki.image_id}});
         let newImageId = curImage ? curImage.id : null
 
@@ -29,6 +28,7 @@ class VikiController {
             if(curImage)
             {
                 await curImage.destroy()
+                newImageId = null
             }
         }
 

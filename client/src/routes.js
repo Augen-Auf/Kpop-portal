@@ -5,6 +5,7 @@ import {
     REGISTRATION_ROUTE,
     PORTAL_ROUTE,
     NEWS_ROUTE,
+    NEWS_PAGE_ROUTE,
     VIKIS_ROUTE,
     CREATE_NEWS_ROUTE,
     STATISTICS_ROUTE,
@@ -44,6 +45,16 @@ export const authRoutes = [
         Component: Profile
     },
     {
+        path: CREATE_VIKI_ROUTE,
+        name: 'Создать вики-страничку',
+        Component: CreateUpdateViki
+    },
+    {
+        path: UPDATE_VIKI_ROUTE,
+        name: 'Обновить вики-страничку',
+        Component: CreateUpdateViki
+    },
+    {
         path: CREATE_NEWS_ROUTE,
         name: 'Создать новость',
         Component: CreateNews
@@ -60,16 +71,6 @@ export const publicRoutes = [
         path: VIKIS_ROUTE,
         name: 'Вики',
         Component: Vikis
-    },
-    {
-        path: CREATE_VIKI_ROUTE,
-        name: 'Создать вики-страничку',
-        Component: CreateUpdateViki
-    },
-    {
-        path: UPDATE_VIKI_ROUTE,
-        name: 'Обновить вики-страничку',
-        Component: CreateUpdateViki
     },
     {
         path: VIKI_PAGE_ROUTE,
@@ -97,7 +98,7 @@ export const publicRoutes = [
         Component: News
     },
     {
-        path: NEWS_ROUTE + '/:id',
+        path: NEWS_PAGE_ROUTE,
         name: '',
         Component: NewsPage
     },

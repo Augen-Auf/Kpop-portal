@@ -3,15 +3,24 @@ const ApiError = require('../error/ApiError');
 
 class NewsController {
     async create(req, res, next) {
-        const {title, lid, text, type, views, author_id, tags} = req.body;
+        const {title, lid, text, type, author_id, tags} = req.body;
         if(!title || !lid || !text) {
             return next(ApiError.badRequest('Отсутсвует заголовок, лид или текст'))
         }
-        const news = await News.create({title, lid, text, type, views, author_id});
 
-        if(tags && tags.length > 0)
+        const image = req.files && req.files.image ? req.files.image.data : null
+        let newImageId = null
+
+        if(image) {
+            newImageId = await Image.create({image}).then(r => r.id)
+        }
+
+        const news = await News.create({title, lid, text, type, views: 1, author_id, image_id: newImageId});
+
+        const tagsArray = tags.split(',').map(item => item.trim().toUpperCase())
+        if(tagsArray && tagsArray.length > 0)
         {
-            for(const item of tags)
+            for(const item of tagsArray)
             {
                 let tag = await Tag.findOne({ where: { tag: item } });
                 console.log(tag)
@@ -28,15 +37,33 @@ class NewsController {
         const id = req.params.id;
         let {title, lid, text, type, author_id, tags} = req.body;
         let news = await News.findByPk(id);
-        const new_news = await news.update({title, lid, text, type, author_id});
+        const image = req.files && req.files.image ? req.files.image.data : null
+
+        const curImage = await Image.findOne({where: {id: news.image_id}});
+        let newImageId = curImage ? curImage.id : null
+        if(image) {
+            const newImage = curImage ? await curImage.update({image}) : await Image.create({image});
+            newImageId = newImage.id
+        }
+        else {
+            if(curImage)
+            {
+                await curImage.destroy()
+                newImageId = null
+            }
+        }
+
+        const new_news = await news.update({title, lid, text, type, author_id, image_id: newImageId});
 
         const newsTags = await NewsTag.findAll({where: {publication_id: id}, include: Tag})
 
-        if(tags && tags.length > 0)
+        const tagsArray = tags.split(',').map(item => item.trim.toUpperCase())
+
+        if(tagsArrays &&tagsArray.length > 0)
         {
             const curTagsArray = newsTags.map(item => item.tag.tag);
-            const addTagsArray = tags.filter(item => !curTagsArray.includes(item))
-            const removeTagsArray = curTagsArray.filter(item => !tags.includes(item))
+            const addTagsArray = tagsArray.filter(item => !curTagsArray.includes(item))
+            const removeTagsArray = curTagsArray.filter(item => !tagsArray.includes(item))
             for (const item of addTagsArray)
             {
                 let tag = await Tag.findOne({ where: { tag: item } });

@@ -84,6 +84,7 @@ User.hasMany(Reaction, {foreignKey: 'user_id', onDelete: 'SET NULL'});
 User.belongsTo(Avatar, {as: 'avatar', allowNull: true, onUpdate:'SET NULL'})
 
 News.belongsTo(User, {foreignKey: 'author_id', onDelete: 'SET NULL'})
+News.belongsTo(Image, {foreignKey: 'image_id', allowNull: true, onDelete: 'SET NULL'})
 News.hasMany(Reaction, {foreignKey: 'publication_id', onDelete: 'CASCADE'});
 News.hasMany(Comment, {foreignKey: 'publication_id', onDelete: 'CASCADE'});
 News.hasMany(SavedNews, {
@@ -105,12 +106,12 @@ Viki.hasMany(SavedNews, {
     onDelete: 'CASCADE'
 });
 
-Viki.belongsTo(Image, {foreignKey: 'image_id', allowNull: true, onDelete: 'SET NULL'})
-Viki.belongsTo(User, {foreignKey: 'author_id', onDelete: 'SET NULL'})
+Viki.belongsTo(Image, {foreignKey: 'image_id', allowNull: true, onDelete: 'CASCADE'})
+Viki.belongsTo(User, {foreignKey: 'author_id', onDelete: 'CASCADE'})
 
 Comment.hasMany(Comment, {foreignKey: 'parent_id', onDelete: 'SET NULL'})
-Comment.belongsTo(User, {foreignKey: 'user_id', onDelete: 'SET NULL'});
-Comment.belongsTo(News, {foreignKey: 'publication_id', onDelete: 'SET NULL'});
+Comment.belongsTo(User, {foreignKey: 'user_id', onDelete: 'CASCADE'});
+Comment.belongsTo(News, {foreignKey: 'publication_id', onDelete: 'CASCADE'});
 
 
 CommentRating.belongsTo(Comment, {foreignKey: 'comment_id', onDelete: 'SET NULL'});
