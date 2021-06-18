@@ -71,7 +71,7 @@ const Profile = observer(() => {
                         <div className="flex flex-col space-y-4">
                             <div className="bg-yellow rounded-md shadow-md ">
                                 <div className="flex flex-col px-3 py-4 space-y-5 text-black">
-                                    <div className="rounded-full lg:w-48 lg:h-48 w-32 h-32 mx-auto">
+                                    <div className="rounded-full lg:w-48 lg:h-48 w-32 h-32 mx-auto bg-pink">
                                         {user.user.avatarId &&
                                             <img src={ user.user.avatarId ? process.env.REACT_APP_API_URL + 'api/avatar/' + user.user.avatarId : 'img/Sunmi.jpg' } className="object-cover h-full w-full rounded-full"/>
                                         }
